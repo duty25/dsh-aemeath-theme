@@ -1,3 +1,8 @@
+/*!
+ * Bundled into dsh-aemeath-theme unmodified.
+ * Original: dsh-mobile-touch-fix 1.0.0 (DeepSeek Harness community plugin; author not stated)
+ * License: MIT
+ */
 window.__ModuleLoader__.load({
 	id: "dsh-mobile-touch-fix",
 	factory: (require) => {

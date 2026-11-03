@@ -227,6 +227,27 @@ ${K} [data-turn-process]{position:relative;overflow:hidden;height:auto !importan
 ${K} [data-turn-process]::before{content:"";position:absolute;left:10px;top:50%;width:12px;height:12px;margin-top:-6px;background:var(--ae-pink);-webkit-mask:${svgUrl('heart')} center/contain no-repeat;mask:${svgUrl('heart')} center/contain no-repeat;filter:drop-shadow(0 0 3px rgba(var(--ae-pink-rgb),.8))}
 ${K} [data-turn-process]:disabled::before{width:16px;height:16px;margin-top:-8px;left:8px;-webkit-mask:none;mask:none;filter:none;background:url("${asset('heart-pulse.png')}") 0 0/96px 16px no-repeat;image-rendering:pixelated;animation:ae-heart .6s steps(6) infinite}
 @keyframes ae-heart{to{background-position:-96px 0}}
+/* "爱弥斯调谐中" running line: pixel tuning bars instead of the whale tail, pink→cyan text sweep */
+${K} [data-chat-running]{--dsw-alias-label-deep-diving:rgb(var(--ae-pink-rgb));--dsw-alias-label-deep-diving-shimmer:rgb(var(--ae-cyan-rgb));--dsw-alias-label-shimmer:rgb(var(--ae-cyan-rgb));color:rgb(var(--ae-pink-rgb)) !important;font-weight:600;letter-spacing:.02em}
+${K} [data-chat-running] [class*="_runningContent"]{gap:8px !important}
+${K} [data-chat-running] [class*="_runningIcon"]{width:19px !important;height:14px !important;contain:none !important;overflow:visible !important;image-rendering:pixelated;
+  background:linear-gradient(rgb(var(--ae-pink-rgb)),rgb(var(--ae-pink-rgb))) 0 100%/3px 6px no-repeat,linear-gradient(rgb(var(--ae-pink-rgb)),rgb(var(--ae-pink-rgb))) 4px 100%/3px 11px no-repeat,linear-gradient(rgb(var(--ae-violet-rgb)),rgb(var(--ae-violet-rgb))) 8px 100%/3px 8px no-repeat,linear-gradient(rgb(var(--ae-cyan-rgb)),rgb(var(--ae-cyan-rgb))) 12px 100%/3px 14px no-repeat,linear-gradient(rgb(var(--ae-cyan-rgb)),rgb(var(--ae-cyan-rgb))) 16px 100%/3px 5px no-repeat;
+  filter:drop-shadow(0 0 3px rgba(var(--ae-pink-rgb),.55));animation:ae-tune .96s steps(1) infinite}
+${K} [data-chat-running] [class*="_runningIcon"] > *{display:none !important}
+@keyframes ae-tune{
+  0%{background-size:3px 6px,3px 11px,3px 8px,3px 14px,3px 5px}
+  17%{background-size:3px 10px,3px 7px,3px 13px,3px 9px,3px 11px}
+  33%{background-size:3px 14px,3px 4px,3px 10px,3px 6px,3px 13px}
+  50%{background-size:3px 8px,3px 13px,3px 5px,3px 12px,3px 8px}
+  67%{background-size:3px 5px,3px 9px,3px 14px,3px 4px,3px 10px}
+  83%{background-size:3px 11px,3px 14px,3px 7px,3px 10px,3px 4px}}
+${K} [data-chat-running] [class*="_runningDivider"]{height:1px !important;position:relative;overflow:visible;
+  background:linear-gradient(90deg,transparent,rgba(var(--ae-pink-rgb),.55) 18%,rgba(var(--ae-violet-rgb),.45) 50%,rgba(var(--ae-cyan-rgb),.55) 82%,transparent) !important}
+${K} [data-chat-running] [class*="_runningDivider"]::after{content:"";position:absolute;top:-7px;left:0;width:15px;height:15px;
+  background:url("${asset('polestar-tag-strip.png')}") 0 0/30px 15px no-repeat;image-rendering:pixelated;filter:drop-shadow(0 0 4px rgba(var(--ae-cyan-rgb),.8));
+  animation:ae-run-star 3.2s linear infinite,ae-qms 1.6s steps(1) infinite}
+@keyframes ae-run-star{from{left:0;opacity:0}8%{opacity:1}92%{opacity:1}to{left:calc(100% - 15px);opacity:0}}
+@media (prefers-reduced-motion:reduce){${K} [data-chat-running] [class*="_runningIcon"],${K} [data-chat-running] [class*="_runningDivider"]::after{animation:none !important}}
 ${K} [data-turn-process]:disabled::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:30%;background:repeating-linear-gradient(90deg,var(--ae-cyan) 0 4px,transparent 4px 6px);animation:ae-scan 1.8s linear infinite}
 @keyframes ae-beat{50%{transform:scale(.7)}}
 @keyframes ae-scan{from{transform:translateX(-100%)}to{transform:translateX(340%)}}
@@ -449,6 +470,16 @@ html[data-ae-opening] [class*="VOzbGW_overlay"]{visibility:hidden !important;ani
 ${K} [data-composer-seat]{background:linear-gradient(180deg,rgba(var(--ae-plum-rgb),0) 0,rgba(var(--ae-plum-rgb),.78) 26px,rgba(var(--ae-plum-rgb),.9)) !important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [data-composer-seat]{background:linear-gradient(180deg,rgba(255,247,251,0),rgba(255,247,251,.85) 26px,rgba(255,247,251,.94)) !important}
 ${K} [data-composer-card] [class$="_row"]{flex-wrap:wrap !important;row-gap:6px !important}
+/* popups rendered inside the composer (e.g. GitHub connect) use position:fixed; a blurred ancestor turns
+   them into a containing block, so drop the blur and lift the seat while one is open */
+${K} :is([data-composer-seat],[data-composer-card]):has(.ghc-backdrop){-webkit-backdrop-filter:none !important;backdrop-filter:none !important;z-index:300 !important}
+${K} [data-composer-seat]:has(.ghc-backdrop) *:has(.ghc-backdrop){-webkit-backdrop-filter:none !important;backdrop-filter:none !important;transform:none !important;filter:none !important}
+${K} .ghc-backdrop{background:rgba(var(--ae-plum-rgb),.62) !important;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);padding:16px !important;align-items:center !important}
+${K} .ghc-panel{max-height:calc(100dvh - 32px) !important;overflow:auto !important;overscroll-behavior:contain;border:1px solid rgba(var(--ae-pink-rgb),.45) !important;border-radius:14px !important;
+  background:linear-gradient(180deg,rgba(var(--ae-plum3-rgb),.98),rgba(var(--ae-plum-rgb),.98)) !important;box-shadow:0 0 0 1px rgba(var(--ae-plum-rgb),.8),0 18px 40px rgba(0,0,0,.55),0 0 24px rgba(var(--ae-pink-rgb),.18) !important}
+${K} .ghc-panel .ghc-actions{flex-wrap:wrap;position:sticky;bottom:-1px;margin:12px -4px 0 !important;padding:10px 4px 2px;background:linear-gradient(180deg,rgba(var(--ae-plum-rgb),0),rgba(var(--ae-plum-rgb),.98) 40%)}
+${K} .ghc-panel .ghc-btn{min-height:40px;border-radius:10px !important}
+${K} .ghc-panel .ghc-tabs .ghc-tab{min-height:38px}
 ${K} [data-composer-card]{overflow:visible !important}
 ${K} [data-composer-card] ~ [class$="_dock"]{position:relative !important;z-index:0;margin-top:8px !important;flex-wrap:nowrap !important;min-height:40px}
 ${K} [data-composer-card] ~ [class$="_dock"] > [data-slot="conversation.composer.dock"]{flex:1 1 auto !important;min-width:0 !important;overflow:hidden}

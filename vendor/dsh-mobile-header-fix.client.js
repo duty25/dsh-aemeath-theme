@@ -1,3 +1,8 @@
+/*!
+ * Bundled into dsh-aemeath-theme unmodified.
+ * Original: dsh-mobile-header-fix 1.3.0 (DeepSeek Harness community plugin; author not stated)
+ * License: MIT
+ */
 window.__ModuleLoader__.load({
 	id: "dsh-mobile-header-fix",
 	factory: (require) => {

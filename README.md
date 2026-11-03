@@ -72,6 +72,32 @@ sh scripts/install-local.sh <已安装的插件目录>      # 构建后覆盖到
 - `src/host/`：宿主端，只负责以 `/aemeath-theme/assets` 提供素材，并注入启动画面。
 - 改了 `lib/index.js`（宿主端）需要重启 DeepSeek Harness。
 
+## 致谢
+
+这个主题建立在许多作者的作品之上。下面每一项的原始许可都完整保留在 `vendor/`，逐个文件的对应关系见 [NOTICE.md](NOTICE.md)。
+
+**内置的社区插件代码**（为了替代、合并这些插件，原代码被打包进了本主题）
+- [dsh-mobile-nav / dsh-web-mobile](https://github.com/mexiaosqwq/dsh-web-mobile) — mexiaosqwq：手机抽屉、头部重排、分页、输入框收起等整套移动端布局。MIT 许可。
+- dsh-mobile-header-fix、dsh-mobile-touch-fix、dsh-wallpaper-engine-mobile-layout — DeepSeek Harness 社区的手机布局修复插件。MIT 许可。原包没有写作者信息，如果你是作者，欢迎提 issue 补上署名。
+
+**配合使用、并被本主题换皮的插件**（没有打包进来，需要你自己安装）
+- [@hytime/dsh-thinking-effort](https://github.com/hytime/dsh-thinking-effort) — hytime：模型胶囊与思考强度滑块。启明星光刃里的光柱辐射算法移植自它，它的算法又源自 [HanaAyane/dsh-reasoning-effort](https://github.com/HanaAyane/dsh-reasoning-effort)（大肥鱼滑块）。MIT 许可。
+
+**美术与字体**
+- [aemeath-mini-codex-pet](https://github.com/cuNuo/aemeath-mini-codex-pet) — sinlatansen：像素小爱弥斯的精灵图。它源自 [lzy-buaa-jdi/ameath](https://gitee.com/lzy-buaa-jdi/ameath) 的像素桌宠。MIT 许可。
+- [Fusion Pixel Font 缝合像素字体](https://github.com/TakWolf/fusion-pixel-font) — TakWolf：像素中文字体。SIL OFL 1.1 许可。
+- [pixelarticons](https://github.com/halfmage/pixelarticons) — Gerrit Halfmann：像素图标。MIT 许可。
+- [Kenney Pixel UI Pack](https://kenney.nl/assets/pixel-ui-pack) — Kenney：九宫格像素按键，本主题对它重新着色。CC0 许可。
+- SpritePilot 的免费动画拾取物精灵：跳动的心、闪光宝石。CC0 许可。
+
+**设计参考**（只参考了做法，没有复制代码或素材）
+- [dsh-aemeath-pet](https://github.com/culture-flask/dsh-aemeath-pet) — culture-flask：DSH 桌宠插件如何读取会话状态（Apache-2.0）。
+- dsh-aemeath-skin：爱弥斯配色思路（CC BY-NC-SA 4.0）。
+- 《星落》《忘却前夜》等游戏的界面：设置页的翻页与布局交互。
+
+**角色与世界观**
+- 爱弥斯、深空联合、「永远的启明星」以及技能名、台词均属于《鸣潮》© 库洛游戏（Kuro Games）。
+
 ## 许可
 
 本项目代码使用 MIT 许可。内置的第三方代码、字体与图片保留各自的许可，游戏相关的名称、徽记与台词不适用 MIT 许可；详见 [NOTICE.md](NOTICE.md) 与 `vendor/`。

@@ -1,3 +1,8 @@
+/*!
+ * Bundled into dsh-aemeath-theme unmodified.
+ * Original: dsh-wallpaper-engine-mobile-layout (mobile layout patch for dsh-plugin-wallpaper-engine; author not stated)
+ * License: MIT
+ */
 window.__ModuleLoader__.load({
   id: 'dsh-wallpaper-engine-mobile-layout',
   factory: () => ({

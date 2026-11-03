@@ -1,3 +1,9 @@
+/*!
+ * Bundled into dsh-aemeath-theme unmodified.
+ * Original: @dsh-external/dsh-mobile-nav 1.0.0 by mexiaosqwq
+ * https://github.com/mexiaosqwq/dsh-web-mobile
+ * License: MIT (see vendor/mobile-nav.LICENSE)
+ */
 window.__ModuleLoader__.load({id: '@dsh-external/dsh-mobile-nav', factory: (require) => {
 const modules = Object.create(null);
 modules["MobileDrawerFooter.js"] = function(require, module, exports) {
