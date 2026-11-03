@@ -198,10 +198,12 @@ function mountPanel(host, ctx) {
         bgFile)));
 
     root.append(sec('pet', '像素爱弥斯',
-      sw('pet', '显示爱弥斯', '可拖到任意位置；点一下弹出快捷菜单，双击盯着你，长按打开本面板'),
+      sw('pet', '显示爱弥斯', '可拖到任意位置；点一下弹出快捷菜单，双击盯着你，连点会晕，在她头上左右来回摸摸她会开心，长按打开本面板'),
       range('petScale', '大小', 0.5, 1.5, 0.05, (v) => `${Math.round(v * 100)}%`),
       sw('petBubbles', '台词气泡'),
-      sw('petFollowAgent', '跟随 Agent 状态', '工作时戴墨镜忙碌，出错会懵，完成会跳起来'),
+      sw('petFollowAgent', '跟随 Agent 状态', '工作时戴墨镜忙碌，出错会懵，完成会欢呼'),
+      sw('petIdle', '空闲小动作', '没事时会伸懒腰、哼歌、看星星、东张西望、偷笑、散步，久了会打瞌睡（点她会醒）'),
+      h('div', { class: 'ae-row' }, h('span', null, '好感度', h('small', null, '摸头会增加')), h('small', null, `${(() => { try { return Number(localStorage.getItem('dsh-aemeath-theme:affection')) || 0; } catch { return 0; } })()} ♥`)),
       h('div', { class: 'ae-btns' },
         h('button', { type: 'button', class: 'ae-btn', onclick: () => store.set({ petPos: null }), html: `${ico('reload')}<span>放回默认位置</span>` }))));
 

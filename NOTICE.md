@@ -36,9 +36,10 @@
 | `src/client/icons.js` 中的图标路径 | pixelarticons，作者 Gerrit Halfmann（https://github.com/halfmage/pixelarticons） | MIT，见 `vendor/pixelarticons.LICENSE` |
 | `assets/btn-*.png`（九宫格按键，经重新着色） | Kenney Pixel UI Pack，作者 Kenney（https://kenney.nl） | CC0，见 `vendor/kenney-pixel-ui.LICENSE.txt` |
 | `assets/heart-pulse.png`、`assets/gem-shine.png` | SpritePilot free animated pickup sprites | CC0 1.0，见 `vendor/spritepilot-CC0.txt` |
+| `assets/pet-extra.webp`（像素爱弥斯扩展动作：偷笑 / 打瞌睡 / 害羞 / 欢呼） | 由 `scripts/gen-pet-extra.sh` 从 dsh-aemeath-pet（culture-flask，Apache-2.0）附带的原始 GIF 缩放、对齐后重建；这些 GIF 表情原作出自 B 站 up 主「Neuro音乐」，角色版权归库洛游戏 | 同人素材，非商用，仅供个人使用；不适用本项目的 MIT 许可 |
 
 ### 只作参考、未复制代码或素材
-- dsh-aemeath-pet（culture-flask，https://github.com/culture-flask/dsh-aemeath-pet，Apache-2.0）：参考了 DSH 桌宠读取会话状态的方式。
+- dsh-aemeath-pet（culture-flask，https://github.com/culture-flask/dsh-aemeath-pet，Apache-2.0）：参考了 DSH 桌宠读取会话状态的方式；扩展动作素材的来源见上表 `assets/pet-extra.webp` 一行。
 - dsh-aemeath-skin（@dsh-external/dsh-client-ui-skin-aemeath，CC BY-NC-SA 4.0）：参考了爱弥斯配色思路，没有使用其素材和样式代码。
 - 《星落》《忘却前夜》等游戏界面：参考了设置页的翻页与布局交互。
 

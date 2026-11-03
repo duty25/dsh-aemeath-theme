@@ -24,6 +24,7 @@ const DEFAULTS = {
   petScale: 0.75,           // 0.5 .. 1.5 (of a 96x104 cell)
   petBubbles: true,
   petFollowAgent: true,
+  petIdle: true,            // little acts when idle (sing, stretch, stroll...)
   petPos: null,             // {x, y} in px from the left/top, null = default
   // dock
   dock: true,               // tap Aemeath to open the quick menu

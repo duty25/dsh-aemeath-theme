@@ -178,17 +178,40 @@ function install(ctx, deps) {
     }
   }
 
+  const NOISE = ['rgba(var(--ae-pink-rgb,255,105,183),.92)', 'rgba(var(--ae-cyan-rgb,119,232,255),.9)',
+    'rgba(255,255,255,.85)', 'rgba(var(--ae-violet-rgb,142,114,255),.88)'];
+  const rnd = (a, b) => a + Math.random() * (b - a);
+
+  // Text nodes of our own deck chrome (title, pillars) that a glitch scrambled;
+  // restored and forgotten when it ends.
+  function restoreText(roots) {
+    for (const root of roots) {
+      const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+      let n;
+      while ((n = walk.nextNode())) {
+        if (n.__aeOrig !== undefined) { n.nodeValue = n.__aeOrig; delete n.__aeOrig; }
+      }
+    }
+  }
+
+  // kind 'scene' = the dialog opening or 系统 ↔ 模组: a longer CRT power-on with
+  // the deck chrome decrypting too. 'next' / 'prev' = page turn.
   function glitch(panel, kind) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
     const target = contentNode(panel);
-    if (!target) return;
+    if (!target) return false;
     const rect = target.getBoundingClientRect();
-    if (!rect.width || !rect.height) return;
-    // keep it cheap on huge pages: cap the cloned subtree
-    if (target.querySelectorAll('*').length > 900) return;
+    if (!rect.width || !rect.height) return false;
+    // keep it cheap on huge pages: cap the cloned subtree (CSS-only fallback then)
+    if (target.querySelectorAll('*').length > 900) return false;
+    const boot = kind === 'scene';
+    const DURATION = boot ? 900 : 640;
+    const prect = panel.getBoundingClientRect();
 
     const host = el('div', 'ae-gl');
     host.setAttribute('data-dir', kind === 'prev' ? 'prev' : 'next');
-    host.style.cssText = `left:${rect.left - panel.getBoundingClientRect().left}px;top:${rect.top - panel.getBoundingClientRect().top}px;width:${rect.width}px;height:${rect.height}px`;
+    host.toggleAttribute('data-boot', boot);
+    host.style.cssText = `left:${rect.left - prect.left}px;top:${rect.top - prect.top}px;width:${rect.width}px;height:${rect.height}px`;
 
     const make = (variant) => {
       const copy = target.cloneNode(true);
@@ -206,43 +229,77 @@ function install(ctx, deps) {
     const base = make('base');
     const ghostA = make('split-a');
     const ghostB = make('split-b');
-    host.append(base, ghostA, ghostB);
-    const tear = el('div', 'ae-gl-tear');
-    host.append(tear);
+    const noise = el('div', 'ae-gl-noise');
+    const blocks = [];
+    for (let i = 0; i < (boot ? 18 : 12); i += 1) { const b = el('i'); noise.appendChild(b); blocks.push(b); }
+    host.append(base, ghostA, ghostB, noise, el('div', 'ae-gl-tear'), el('div', 'ae-gl-beam'));
     panel.appendChild(host);
+    for (const c of [base, ghostA, ghostB]) c.scrollTop = target.scrollTop;
+    const chrome = boot
+      ? [...panel.querySelectorAll('.ae-st-title, .ae-pl, .ae-st-count')]
+      : [...panel.querySelectorAll('.ae-pl[data-active], .ae-st-count')];
+    panel.style.setProperty('--ae-gl-dur', `${DURATION}ms`);
     panel.setAttribute('data-ae-flip', kind);
     panel.setAttribute('data-ae-fx', 'glitch');
 
+    const band = (node, sign, heat) => {
+      const top = rnd(0, 82);
+      const h = rnd(8, boot ? 44 : 32);
+      node.style.clipPath = `inset(${top}% 0 ${Math.max(0, 100 - top - h)}% 0)`;
+      node.style.translate = `${sign * rnd(5, boot ? 20 : 14) * heat}px ${rnd(-3, 3) * heat}px`;
+      node.style.opacity = String(0.5 + 0.5 * heat);
+    };
     const start = performance.now();
-    const DURATION = 460;
+    let frame = -1;
     const tick = () => {
-      const p = Math.min(1, (performance.now() - start) / DURATION);
-      const eased = 1 - Math.pow(1 - p, 2.4);
-      scramble(base, Math.min(1, p * 1.35));
-      scramble(ghostA, Math.min(1, p * 0.8));
-      scramble(ghostB, Math.min(1, p * 0.6));
+      const t = performance.now() - start;
+      const p = Math.min(1, t / DURATION);
+      // step at ~22 fps: reads as a stuttering signal and keeps phones cool
+      const f = Math.floor(t / 45);
+      if (f !== frame) {
+        frame = f;
+        const heat = Math.pow(1 - p, 1.25);
+        const reveal = Math.max(0, Math.min(1, (p - (boot ? 0.24 : 0.14)) / 0.7));
+        scramble(base, reveal);
+        scramble(ghostA, reveal * 0.7);
+        scramble(ghostB, reveal * 0.5);
+        for (const c of chrome) scramble(c, Math.max(0, Math.min(1, (p - 0.12) / 0.72)));
+        band(ghostA, -1, heat);
+        band(ghostB, 1, heat);
+        base.style.translate = Math.random() < 0.4 * heat ? `${rnd(-8, 8) * heat}px 0` : '0 0';
+        for (const b of blocks) {
+          if (Math.random() < 0.6 * heat + 0.04) {
+            b.style.cssText = `top:${rnd(0, 98)}%;left:${rnd(-8, 88)}%;width:${rnd(6, boot ? 60 : 45)}%;`
+              + `height:${rnd(2, boot ? 16 : 10)}px;opacity:${(rnd(0.4, 1) * Math.max(heat, 0.15)).toFixed(2)};`
+              + `--c:${NOISE[(Math.random() * NOISE.length) | 0]}`;
+          } else b.style.opacity = '0';
+        }
+      }
       if (p < 1) panel.__aeGlRaf = requestAnimationFrame(tick);
       else finish();
     };
     const finish = () => {
       cancelAnimationFrame(panel.__aeGlRaf);
+      restoreText(chrome);
       host.remove();
       panel.removeAttribute('data-ae-flip');
       panel.removeAttribute('data-ae-fx');
+      panel.style.removeProperty('--ae-gl-dur');
     };
     panel.__aeGlStop = finish;
     tick();
+    return true;
   }
 
   function flip(panel, kind) {
     const fx = store.get().settingsFlip || 'glitch';
     if (fx === 'none') return;
     if (panel.__aeGlStop) { try { panel.__aeGlStop(); } catch (e) { /* ignore */ } panel.__aeGlStop = null; }
-    if (fx === 'glitch') { glitch(panel, kind); return; }
+    if (fx === 'glitch' && glitch(panel, kind)) return;
     panel.removeAttribute('data-ae-flip');
     void panel.offsetWidth; // restart the CSS animations
     panel.setAttribute('data-ae-flip', kind);
-    panel.setAttribute('data-ae-fx', fx);
+    panel.setAttribute('data-ae-fx', fx === 'glitch' ? 'glitch-lite' : fx);
     clearTimeout(panel.__aeFlipT);
     panel.__aeFlipT = setTimeout(() => panel.removeAttribute('data-ae-flip'), 700);
   }

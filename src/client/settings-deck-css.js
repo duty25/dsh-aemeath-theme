@@ -308,7 +308,7 @@ ${D}[data-ae-flip="scene"] [class*="VOzbGW_options"]{animation:ae-rs-tune .5s ea
 @keyframes ae-rs-drop{from{transform:translateY(-26px);opacity:0}to{transform:none;opacity:1}}
 @keyframes ae-rs-tune{0%{opacity:0;filter:blur(6px) hue-rotate(40deg)}60%{opacity:1;filter:blur(0)}100%{filter:none}}
 /* glitch: electronic-ghost tear */
-${D}[data-ae-flip][data-ae-fx="glitch"]:not([data-ae-flip="scene"]) [class*="VOzbGW_options"]{animation:ae-rs-glitch .46s steps(1) both}
+${D}[data-ae-flip][data-ae-fx="glitch-lite"] [class*="VOzbGW_options"]{animation:ae-rs-glitch .5s steps(1) both}
 @keyframes ae-rs-glitch{
   0%{opacity:0;clip-path:inset(0 0 100% 0)}
   12%{opacity:1;clip-path:inset(10% 0 62% 0);transform:translateX(-14px);filter:drop-shadow(3px 0 rgba(var(--rs-pink-rgb),.9)) drop-shadow(-3px 0 rgba(var(--rs-cyan-rgb),.9))}
@@ -331,25 +331,52 @@ ${D}[data-ae-bump="start"] [class*="VOzbGW_options"]{animation:ae-rs-bump-s .35s
   ${D}[data-ae-flip] *,${D} .ae-pl{animation:none !important;transition:none !important}
 }
 /* ---------- glitch / decrypt page turn ---------- */
-${D} .ae-gl{position:absolute;z-index:30;pointer-events:none;overflow:hidden;contain:strict}
-${D} .ae-gl-inner{position:absolute;inset:0;margin:0 !important;overflow:hidden !important;pointer-events:none !important}
-${D} .ae-gl-inner[data-gl="base"]{opacity:1;
-  text-shadow:0 0 6px rgba(var(--ae-cyan-rgb),.5);filter:contrast(1.05)}
-${D} .ae-gl-inner[data-gl="split-a"]{opacity:.85;mix-blend-mode:screen;color:#ff5ec4 !important;
-  clip-path:inset(0 0 62% 0);animation:ae-gl-split-a .13s steps(2) infinite;translate:-3px 0}
-${D} .ae-gl-inner[data-gl="split-b"]{opacity:.8;mix-blend-mode:screen;color:#5ce8ff !important;
-  clip-path:inset(58% 0 0 0);animation:ae-gl-split-b .11s steps(2) infinite;translate:3px 0}
+/* The overlay owns the whole transition: the real page stays hidden until the
+   copy above it has decrypted, so the two never blend into a washed-out mix. */
+${D} .ae-gl{position:absolute;z-index:30;pointer-events:none;overflow:hidden;contain:strict;
+  background:rgba(var(--rs-ink-rgb,10,11,26),.94);animation:ae-gl-host var(--ae-gl-dur,.64s) linear both}
+${D} .ae-gl-inner{position:absolute;inset:0;margin:0 !important;overflow:hidden !important;pointer-events:none !important;
+  animation:none !important;transform:none !important}
+${D} .ae-gl-inner[data-gl="base"]{opacity:1;filter:contrast(1.15) saturate(1.25);
+  text-shadow:2px 0 rgba(var(--ae-pink-rgb),.75),-2px 0 rgba(var(--ae-cyan-rgb),.75),0 0 8px rgba(var(--ae-cyan-rgb),.45)}
+${D} .ae-gl-inner[data-gl="split-a"]{opacity:1;mix-blend-mode:screen;color:#ff4fbf !important;
+  background:rgba(var(--ae-pink-rgb),.14) !important;text-shadow:0 0 6px #ff4fbf}
+${D} .ae-gl-inner[data-gl="split-b"]{opacity:1;mix-blend-mode:screen;color:#4fe6ff !important;
+  background:rgba(var(--ae-cyan-rgb),.14) !important;text-shadow:0 0 6px #4fe6ff}
 ${D} .ae-gl-inner *{color:inherit !important;border-color:currentColor !important;background-image:none !important}
+${D} .ae-gl-noise{position:absolute;inset:0;mix-blend-mode:screen}
+${D} .ae-gl-noise i{position:absolute;display:block;opacity:0;background:var(--c);
+  box-shadow:0 0 8px var(--c);image-rendering:pixelated}
 ${D} .ae-gl-tear{position:absolute;inset:0;
-  background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 3px,rgba(var(--ae-pink-rgb),.22) 3px 5px,transparent 5px 26px);
-  mix-blend-mode:screen;animation:ae-gl-tear .42s steps(3) both}
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 2px,rgba(var(--ae-pink-rgb),.38) 2px 3px,rgba(0,0,0,0) 3px 7px,rgba(var(--ae-cyan-rgb),.18) 7px 8px);
+  mix-blend-mode:screen;animation:ae-gl-tear var(--ae-gl-dur,.64s) steps(8) both}
 ${D} .ae-gl[data-dir="prev"] .ae-gl-tear{animation-name:ae-gl-tear-p}
-${D}[data-ae-flip][data-ae-fx="glitch"] [class*="VOzbGW_options"]{animation:ae-gl-in .42s steps(4) both}
-@keyframes ae-gl-split-a{0%{translate:-3px 0;clip-path:inset(0 0 62% 0)}50%{translate:4px -2px;clip-path:inset(0 0 44% 0)}100%{translate:-2px 0;clip-path:inset(0 0 70% 0)}}
-@keyframes ae-gl-split-b{0%{translate:3px 0;clip-path:inset(58% 0 0 0)}50%{translate:-4px 2px;clip-path:inset(40% 0 0 0)}100%{translate:2px 0;clip-path:inset(66% 0 0 0)}}
-@keyframes ae-gl-tear{0%{opacity:0;translate:0 -12px}25%{opacity:.9;translate:0 6px}55%{opacity:.4;translate:0 -4px}100%{opacity:0;translate:0 0}}
-@keyframes ae-gl-tear-p{0%{opacity:0;translate:0 12px}25%{opacity:.9;translate:0 -6px}55%{opacity:.4;translate:0 4px}100%{opacity:0;translate:0 0}}
-@keyframes ae-gl-in{0%{opacity:.25;filter:blur(2px) saturate(1.6)}60%{opacity:1;filter:blur(0)}100%{opacity:1;filter:none}}
+${D} .ae-gl-beam{position:absolute;left:0;right:0;height:3px;top:0;
+  background:linear-gradient(90deg,transparent,rgba(var(--ae-cyan-rgb),.95) 20%,#fff 50%,rgba(var(--ae-pink-rgb),.95) 80%,transparent);
+  box-shadow:0 0 14px 3px rgba(var(--ae-pink-rgb),.7),0 0 4px #fff;animation:ae-gl-beam var(--ae-gl-dur,.64s) cubic-bezier(.5,0,.3,1) both}
+${D} .ae-gl[data-dir="prev"] .ae-gl-beam{animation-name:ae-gl-beam-p}
+${D} .ae-gl[data-boot]{animation-name:ae-gl-boot}
+${D} .ae-gl[data-boot] .ae-gl-beam{height:4px;animation-name:ae-gl-boot-beam}
+${D}[data-ae-flip][data-ae-fx="glitch"] [class*="VOzbGW_options"]:not(.ae-gl-inner){animation:ae-gl-in var(--ae-gl-dur,.64s) steps(1) both}
+/* lit pillar / counter flicker along with the page */
+${D}[data-ae-flip][data-ae-fx="glitch"] .ae-pl[data-active],
+${D}[data-ae-flip][data-ae-fx="glitch"] .ae-st-count{animation:ae-gl-chrome var(--ae-gl-dur,.64s) steps(1) both}
+${D}[data-ae-flip="scene"][data-ae-fx="glitch"] .ae-st-head,
+${D}[data-ae-flip="scene"][data-ae-fx="glitch"] .ae-st-foot{animation:ae-gl-chrome var(--ae-gl-dur,.9s) steps(1) both}
+${D}[data-ae-flip="scene"][data-ae-fx="glitch"] .ae-pl{animation:ae-gl-pill var(--ae-gl-dur,.9s) steps(1) both;animation-delay:calc(var(--i,0) * 28ms)}
+@keyframes ae-gl-host{0%,82%{opacity:1}100%{opacity:0}}
+@keyframes ae-gl-boot{0%{opacity:1;clip-path:inset(49.6% 0 49.6% 0)}9%{clip-path:inset(49.6% 0 49.6% 0);filter:brightness(3)}
+  18%{clip-path:inset(0 0 0 0);filter:brightness(1.8)}26%{filter:none}84%{opacity:1}100%{opacity:0;clip-path:inset(0)}}
+@keyframes ae-gl-tear{0%{opacity:.9;translate:0 -16px}30%{opacity:1;translate:0 8px}60%{opacity:.6;translate:0 -6px}100%{opacity:0;translate:0 0}}
+@keyframes ae-gl-tear-p{0%{opacity:.9;translate:0 16px}30%{opacity:1;translate:0 -8px}60%{opacity:.6;translate:0 6px}100%{opacity:0;translate:0 0}}
+@keyframes ae-gl-beam{0%{top:0;opacity:1}80%{opacity:1}100%{top:100%;opacity:0}}
+@keyframes ae-gl-beam-p{0%{top:100%;opacity:1}80%{opacity:1}100%{top:0;opacity:0}}
+@keyframes ae-gl-boot-beam{0%,8%{top:50%;opacity:1;transform:scaleX(.05)}16%{transform:scaleX(1)}22%{top:0}80%{opacity:1}100%{top:100%;opacity:0}}
+@keyframes ae-gl-in{0%,78%{opacity:0}79%{opacity:1;translate:-4px 0}86%{translate:3px 0}92%{translate:0 0}100%{opacity:1;translate:0 0}}
+@keyframes ae-gl-chrome{0%{opacity:.35;translate:-5px 0}12%{opacity:1;translate:4px 0}24%{opacity:.5;translate:-2px 0}36%{opacity:1;translate:0 0}
+  48%{opacity:.75}60%,100%{opacity:1;translate:0 0}}
+@keyframes ae-gl-pill{0%{opacity:0;translate:0 -10px}20%{opacity:1;translate:3px 0}35%{opacity:.4;translate:-3px 0}50%,100%{opacity:1;translate:0 0}}
+@media (prefers-reduced-motion:reduce){${D} .ae-gl{display:none}}
 
 /* ---------- phone: full-screen deck ---------- */
 @media (max-width:760px){

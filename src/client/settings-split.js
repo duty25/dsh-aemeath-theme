@@ -146,9 +146,14 @@ function openSettings(mode) {
   if (launcher.getAttribute('aria-haspopup') === 'dialog') { launcher.click(); return; }
   launcher.click();
   let tries = 0;
+  // Only the account menu's own row counts: the pet quick menu (#aemeath-dock) also
+  // holds a 「主题设置」menuitem and stays in the DOM after its first use.
   const pick = () => {
-    const item = [...document.querySelectorAll('[role="menuitem"]')]
-      .find((el) => /设置|Settings/i.test(el.textContent || ''));
+    const items = [...document.querySelectorAll('[role="menuitem"]')]
+      .filter((el) => !el.closest('#aemeath-dock'));
+    const text = (el) => (el.textContent || '').trim();
+    const item = items.find((el) => el.getAttribute('data-ae-dup') === 'settings' || /^(设置|Settings)$/i.test(text(el)))
+      || items.find((el) => /^(设置|Settings)\b/i.test(text(el)));
     if (item) { item.click(); return; }
     if (++tries < 40) requestAnimationFrame(pick);
     else { pendingMode = null; setOpening(null); }
