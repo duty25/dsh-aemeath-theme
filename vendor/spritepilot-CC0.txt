@@ -1,0 +1,24 @@
+SpritePilot 像素动画素材：来源与许可核验记录
+
+本文件为资料整理者的核验记录，不是重新授予许可，不将资料包中的其他资源一并声明为 CC0。
+
+发布者：SpritePilot。来源页未单独列出个人画师姓名。
+核验日期：2026-10-27（Asia/Taipei）。
+
+六帧跳动爱心与八帧宝石闪光：
+来源页面：https://spritepilot.com/blog/free-animated-pickup-sprites
+页面“License: CC0”章节声明所列文件在 CC0 1.0 下发布，允许复制、修改、用于免费或商业项目，不要求署名，不得暗示作者背书。
+原始文件：
+https://spritepilot.com/blog/free-animated-pickup-sprites/heart-pulse-strip.png
+https://spritepilot.com/blog/free-animated-pickup-sprites/gem-shine-strip.png
+
+五帧 16px 爱心：
+来源页面：https://spritepilot.com/free-game-assets/pickups
+页面“Free for any use (CC0)”章节声明该页资源采用 CC0 1.0，允许使用、修改和分享，不要求署名。
+原始文件：https://spritepilot.com/free-assets/pickups/heart-16px_strip5.png
+
+CC0 1.0 说明：https://creativecommons.org/publicdomain/zero/1.0/
+CC0 1.0 法律文本：https://creativecommons.org/publicdomain/zero/1.0/legalcode.en
+
+下载时间、SHA-256、实际字节数和技术检查结果见资料包内《素材下载与验证.json》。
+本次没有改色、裁切或重绘这些动画原图。原始每帧尺寸与帧数不应跨版本混用。

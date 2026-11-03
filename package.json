@@ -1,0 +1,55 @@
+{
+  "name": "dsh-aemeath-theme",
+  "version": "1.0.0",
+  "description": "鸣潮·爱弥斯 像素风全局主题：像素小爱弥斯桌宠、星夜背景、像素按键、频段柱设置页与启明星光刃滑块，手机与电脑都适配。非官方同人作品。",
+  "type": "module",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "assets",
+    "vendor",
+    "cordis.patch.yml",
+    "NOTICE.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ]
+    }
+  },
+  "author": "duty25",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duty25/dsh-aemeath-theme.git"
+  },
+  "homepage": "https://github.com/duty25/dsh-aemeath-theme",
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "theme",
+    "wuthering-waves",
+    "aemeath",
+    "pixel-art"
+  ]
+}
