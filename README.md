@@ -4,13 +4,19 @@
 
 给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web 界面用的全局主题插件：像素小爱弥斯、星夜背景、像素按键、鸣潮风格的过程名称、频段柱式设置页，以及「永远的启明星」配色的思考强度光刃。手机和电脑都适配。
 
-| 电脑 · 聊天页 | 电脑 · 系统设置 |
+| 电脑 · 欢迎页 | 电脑 · 聊天页 |
 |---|---|
-| ![](docs/desktop-chat.webp) | ![](docs/desktop-settings-system.webp) |
+| ![](docs/desktop-home.webp) | ![](docs/desktop-chat.webp) |
 
-| 手机 · 聊天页 | 手机 · 侧栏 | 电脑 · 插件中心 |
+| 电脑 · 系统设置 | 电脑 · 插件中心 |
+|---|---|
+| ![](docs/desktop-settings-system.webp) | ![](docs/desktop-settings-modules.webp) |
+
+| 手机 · 欢迎页 | 手机 · 侧栏 | 手机 · 聊天页 |
 |---|---|---|
-| ![](docs/phone-chat.webp) | ![](docs/phone-sidebar.webp) | ![](docs/desktop-settings-modules.webp) |
+| ![](docs/phone-home.webp) | ![](docs/phone-sidebar.webp) | ![](docs/phone-chat.webp) |
+
+截图中的工作区、会话与对话均为演示内容。
 
 ## 功能
 
