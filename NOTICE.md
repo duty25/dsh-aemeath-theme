@@ -11,13 +11,15 @@
 
 本项目打包或改编了下列作者的作品，在此致谢。各项原始许可证全文保存在 `vendor/`。
 
-### 内置的插件代码（原样打包，未改动）
+### 内置的插件代码
 | 文件 | 原作品与作者 | 许可 |
 |---|---|---|
-| `vendor/mobile-nav.client.js`（手机抽屉、头部重排、分页、输入框收起） | @dsh-external/dsh-mobile-nav 1.0.0，作者 mexiaosqwq（https://github.com/mexiaosqwq/dsh-web-mobile） | MIT，见 `vendor/mobile-nav.LICENSE` |
+| `vendor/mobile-nav.client.js`（手机抽屉、头部重排、分页、输入框收起；为适配 DeepSeek Harness 0.2.2 做了少量修改：按列类名定位侧栏与主区、清理抽屉的 inert 残留、横向滚动样式加优先级） | @dsh-external/dsh-mobile-nav 1.0.0，作者 mexiaosqwq（https://github.com/mexiaosqwq/dsh-web-mobile） | MIT，见 `vendor/mobile-nav.LICENSE` |
 | `vendor/dsh-mobile-header-fix.client.js` | dsh-mobile-header-fix 1.3.0，DeepSeek Harness 社区插件（原包未注明作者） | MIT |
 | `vendor/dsh-mobile-touch-fix.client.js` | dsh-mobile-touch-fix 1.0.0，DeepSeek Harness 社区插件（原包未注明作者） | MIT |
 | `vendor/dsh-wallpaper-engine-mobile-layout.client.js` | dsh-wallpaper-engine-mobile-layout，dsh-plugin-wallpaper-engine 的手机布局补丁（原包未注明作者） | MIT |
+
+除 `vendor/mobile-nav.client.js` 的上述适配修改外，其余文件原样打包，未改动。
 
 上面三个未注明作者的插件，如果你是原作者，请提 issue，我们会补上署名和链接。
 

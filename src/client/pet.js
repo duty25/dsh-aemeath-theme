@@ -136,17 +136,34 @@ class Pet {
     this.offStore = store.subscribe((p) => this.applyPrefs(p));
     this.onResize = () => this.place(this.x, this.y, false);
     window.addEventListener('resize', this.onResize);
-    const loop = (t) => { this.tick(t); this.raf = requestAnimationFrame(loop); };
-    this.raf = requestAnimationFrame(loop);
+    const shouldPause = () => !this.el || this.el.hidden || document.hidden
+      || (document.body.hasAttribute('data-ae-settings-open') && innerWidth <= 760 && !!document.documentElement.dataset.aeSetStyle);
+    const loop = (t) => {
+      this.raf = 0;
+      if (shouldPause()) return;
+      this.tick(t);
+      if (!shouldPause()) this.raf = requestAnimationFrame(loop);
+    };
+    this.syncLoop = () => {
+      if (shouldPause()) { if (this.raf) { cancelAnimationFrame(this.raf); this.raf = 0; } }
+      else if (!this.raf) { this.lastTick = 0; this.raf = requestAnimationFrame(loop); }
+    };
+    this.bodyMo = new MutationObserver(this.syncLoop);
+    this.bodyMo.observe(document.body, { attributes: true, attributeFilter: ['data-ae-settings-open'] });
+    document.addEventListener('visibilitychange', this.syncLoop);
+    this.syncLoop();
     setTimeout(() => this.greet(), 900);
     return () => this.unmount();
   }
 
   unmount() {
     cancelAnimationFrame(this.raf);
+    this.raf = 0;
     clearTimeout(this.bubbleTimer);
     clearTimeout(this.fxTimer);
     window.removeEventListener('resize', this.onResize);
+    document.removeEventListener('visibilitychange', this.syncLoop);
+    this.bodyMo?.disconnect();
     if (this.offStore) this.offStore();
     if (this.el) this.el.remove();
     if (this.style) this.style.remove();
@@ -165,6 +182,7 @@ class Pet {
     this.sprite.style.setProperty('--h', h + 'px');
     this.sprite.style.imageRendering = w >= CW ? 'pixelated' : 'auto';
     this.lastTick = 0;
+    this.syncLoop?.();
     if (this.dragging) return;
     const pos = p.petPos;
     if (pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) this.place(pos.x * innerWidth, pos.y * innerHeight, false);
@@ -189,12 +207,17 @@ class Pet {
 
   place(x, y, save) {
     const { w, h } = this.size();
-    this.x = Math.max(0, Math.min(innerWidth - w, x));
-    this.y = Math.max(0, Math.min(innerHeight - h, y));
-    this.el.style.transform = `translate3d(${Math.round(this.x)}px,${Math.round(this.y)}px,0)`;
-    this.el.toggleAttribute('data-edge-left', this.x < 70);
-    this.el.toggleAttribute('data-edge-right', this.x > innerWidth - w - 70);
-    if (save) store.set({ petPos: { x: this.x / innerWidth, y: this.y / innerHeight } });
+    const nx = Math.max(0, Math.min(innerWidth - w, x));
+    const ny = Math.max(0, Math.min(innerHeight - h, y));
+    const rx = Math.round(nx), ry = Math.round(ny);
+    this.x = nx; this.y = ny;
+    if (this._rx !== rx || this._ry !== ry) {
+      this._rx = rx; this._ry = ry;
+      this.el.style.transform = `translate3d(${rx}px,${ry}px,0)`;
+      this.el.toggleAttribute('data-edge-left', nx < 70);
+      this.el.toggleAttribute('data-edge-right', nx > innerWidth - w - 70);
+    }
+    if (save) store.set({ petPos: { x: nx / innerWidth, y: ny / innerHeight } });
   }
 
   // ---------- animation ----------
@@ -378,7 +401,7 @@ class Pet {
   }
 
   tick(now) {
-    if (!this.el || this.el.hidden) return;
+    if (!this.el || this.el.hidden || document.body.hasAttribute('data-ae-settings-open') && innerWidth <= 760 && !!document.documentElement.dataset.aeSetStyle) return;
     const anim = this.currentAnim(now);
     const spec = ANIMS[anim];
     const len = spec.seq ? spec.seq.length : spec.frames;
@@ -614,3 +637,4 @@ function install(ctx, opts) {
 }
 
 module.exports = { install };
+

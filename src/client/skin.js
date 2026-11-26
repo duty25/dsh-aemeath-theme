@@ -8,6 +8,8 @@ const store = require('./store.js');
 const { tokens, cssVars } = require('./palette.js');
 const extra = require('./skin-extra.js');
 const chrome = require('./chrome.js');
+const sidebar = require('./sidebar-css.js');
+const hero = require('./hero-css.js');
 const { asset } = require("./assets.js");
 
 const A = (name) => `url("${asset(name)}")`;
@@ -213,7 +215,7 @@ function install(ctx) {
   const style = document.createElement('style');
   style.dataset.plugin = 'dsh-aemeath-theme';
   style.dataset.pluginCss = 'dsh-aemeath-theme/skin.css';
-  style.textContent = buildCss() + extra.buildCss(A) + chrome.buildCss();
+  style.textContent = buildCss() + extra.buildCss(A) + chrome.buildCss() + sidebar.buildSidebarCss() + hero.buildHeroCss();
   document.head.appendChild(style);
 
   const bg = document.createElement('div');
@@ -226,7 +228,7 @@ function install(ctx) {
   let disposeTokens = null;
   let lastGlass = null;
 
-  const flag = (name, on) => { if (on) root.setAttribute(name, ''); else root.removeAttribute(name); };
+  const flag = (name, on) => root.toggleAttribute(name, !!on);
 
   function apply(p) {
     root.setAttribute('data-aemeath', '');
@@ -241,6 +243,8 @@ function install(ctx) {
     flag('data-ae-hide-bell', p.hideNotifyBell);
     root.setAttribute('data-ae-palette', p.palette || 'aemeath');
     root.setAttribute('data-ae-font', p.uiFont || 'pixel-title');
+    root.setAttribute('data-ae-header-style', p.headerStyle || 'starlight');
+    root.setAttribute('data-ae-sb', p.sidebarStyle === 'pixel' ? 'pixel' : 'starlight');
     for (const [k, v] of Object.entries(cssVars(p.palette))) root.style.setProperty(k, v);
     // background
     const show = p.background !== 'none';
@@ -275,9 +279,10 @@ function install(ctx) {
     if (disposeTokens) disposeTokens();
     style.remove();
     bg.remove();
-    for (const a of ['data-aemeath', 'data-ae-skin', 'data-ae-corners', 'data-ae-capsule', 'data-ae-clamp', 'data-ae-pixel-icons', 'data-ae-compact-sb', 'data-ae-brand', 'data-ae-hide-bell', 'data-ae-palette', 'data-ae-font']) root.removeAttribute(a);
+    for (const a of ['data-aemeath', 'data-ae-skin', 'data-ae-corners', 'data-ae-capsule', 'data-ae-clamp', 'data-ae-pixel-icons', 'data-ae-compact-sb', 'data-ae-brand', 'data-ae-hide-bell', 'data-ae-palette', 'data-ae-font', 'data-ae-header-style', 'data-ae-sb']) root.removeAttribute(a);
     for (const k of Object.keys(cssVars('aemeath'))) root.style.removeProperty(k);
   };
 }
 
 module.exports = { install };
+

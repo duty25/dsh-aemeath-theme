@@ -33,10 +33,10 @@ html[style*="color-scheme: light"] .ae-panel .ae-sec{background:rgba(255,255,255
 .ae-panel .ae-sec h4 + .ae-row{border-top:0}
 .ae-panel .ae-row > span{min-width:0;flex:1}
 .ae-panel .ae-row small{display:block;font-size:11.5px;color:var(--dsw-alias-label-tertiary,#a8a5bc)}
-.ae-panel button.ae-sw.ae-sw{position:relative !important;min-width:46px;min-height:24px;border-radius:0 !important;overflow:hidden;width:46px;height:24px;flex:none;border:2px solid var(--pk);background:rgba(13,9,27,.5);cursor:pointer;padding:0}
-.ae-panel button.ae-sw.ae-sw::after{display:block !important;opacity:1 !important;content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:#a8a5bc;transition:left .12s steps(3)}
+.ae-panel button.ae-sw.ae-sw{position:relative !important;min-width:46px;min-height:24px;border-radius:0 !important;overflow:hidden;width:46px;height:24px;flex:none;border:2px solid var(--pk);background:rgba(13,9,27,.5);cursor:pointer;padding:0;touch-action:manipulation}
+.ae-panel button.ae-sw.ae-sw::after{display:block !important;opacity:1 !important;content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:#a8a5bc;transform:translate3d(0,0,0);transition:transform .14s steps(3),background-color .14s}
 .ae-panel button.ae-sw.ae-sw[aria-checked="true"]{background:rgba(var(--ae-pink-rgb,255,105,183),.35)}
-.ae-panel button.ae-sw.ae-sw[aria-checked="true"]::after{left:24px;background:var(--pk);box-shadow:0 0 6px var(--pk)}
+.ae-panel button.ae-sw.ae-sw[aria-checked="true"]::after{transform:translate3d(22px,0,0);background:var(--pk);box-shadow:0 0 6px var(--pk)}
 .ae-panel .ae-row:has(.ae-seg){flex-wrap:wrap}
 .ae-panel .ae-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;flex:none;max-width:100%;border:2px solid var(--pk);gap:0}
 .ae-panel .ae-row:has(.ae-seg > :nth-child(4)) .ae-seg{flex:1 0 100%;grid-auto-flow:row;grid-template-columns:repeat(auto-fit,minmax(64px,1fr))}
@@ -126,9 +126,12 @@ function mountPanel(host, ctx) {
   const root = h('div', { class: 'ae-panel' });
   host.appendChild(root);
 
-  const sw = (key, label, note) => h('div', { class: 'ae-row' },
-    h('span', null, label, note ? h('small', null, note) : null),
-    h('button', { type: 'button', class: 'ae-sw', role: 'switch', 'aria-checked': String(!!store.get()[key]), 'aria-label': label, onclick: () => store.set({ [key]: !store.get()[key] }) }));
+  const switches = new Map();
+  const sw = (key, label, note) => {
+    const b = h('button', { type: 'button', class: 'ae-sw', role: 'switch', 'aria-checked': String(!!store.get()[key]), 'aria-label': label, onclick: () => store.set({ [key]: !store.get()[key] }) });
+    switches.set(key, b);
+    return h('div', { class: 'ae-row' }, h('span', null, label, note ? h('small', null, note) : null), b);
+  };
   const seg = (label, opts, cur, onPick, note) => h('div', { class: 'ae-row' },
     h('span', null, label, note ? h('small', null, note) : null),
     h('div', { class: 'ae-seg', role: 'group', 'aria-label': label },
@@ -242,8 +245,8 @@ function mountPanel(host, ctx) {
     root.append(sec('cog', '设置页（0.2 新版）',
       sw('settingsSplit', '拆成两个入口', '侧栏底部出现「系统设置」和「插件中心」：前者只显示 DeepSeek Harness 自带的设置，后者只显示第三方插件加的设置页'),
       sw('settingsSkin', '设置页新皮肤', '官方设置弹窗换成爱弥斯「频段柱」布局'),
-      seg('设置页风格', [['resonance', '共鸣·频段柱'], ['classic', '经典列表']], p.settingsStyle, (v) => store.set({ settingsStyle: v }), '共鸣：一排频段竖柱，选中项展开点亮，底部切换 系统/模组，可左右滑动翻页；经典：保留官方侧边导航'),
-      seg('翻页效果', [['glitch', '电子幽灵·乱码'], ['scan', '共鸣扫描'], ['slide', '平移'], ['none', '关闭']], p.settingsFlip, (v) => store.set({ settingsFlip: v }), '切换设置页时的转场：选「电子幽灵」时新页面会先乱码解密再显形'),
+      seg('设置页风格', [['starlight', '星辉·侧栏'], ['resonance', '共鸣·频段柱'], ['classic', '经典列表']], p.settingsStyle, (v) => store.set({ settingsStyle: v }), '星辉：左侧图标导航 + 右侧卡片，手机上为顶部滑动标签与底部翻页，系统设置粉色、插件中心紫色；共鸣：一排频段竖柱，选中项展开点亮，底部切换 系统/模组，可左右滑动翻页；经典：保留官方侧边导航'),
+      seg('翻页效果', [['glitch', '电子幽灵'], ['scan', '共鸣扫描'], ['slide', '平移'], ['none', '关闭']], p.settingsFlip, (v) => store.set({ settingsFlip: v })),
       sw('settingsSwipe', '左右滑动翻页', '在设置内容区左右轻扫可切换上/下一页'),
       h('div', { class: 'ae-btns' },
         h('button', { type: 'button', class: 'ae-btn', onclick: () => settingsSplit().openSettings('official'), html: `${ico('cog')}<span>打开系统设置</span>` }),
@@ -252,7 +255,9 @@ function mountPanel(host, ctx) {
     root.append(sec('zap', '模型选择胶囊',
       sw('capsuleSkin', '爱弥斯胶囊皮肤', '像素字体 + 粉色发光边框，思考强度颜色保留'),
       sw('chatChrome', '舰桥式聊天界面', '顶栏两行重排、输入框宝石按键、底部状态条与收起把手统一样式'),
+      seg('顶栏样式', [['starlight', '星辉胶囊'], ['ribbon', '轻透星轨'], ['classic', '原版舰桥']], p.headerStyle || 'starlight', (v) => store.set({ headerStyle: v }), '星辉胶囊：联体琉璃双键 + 悬浮分段标签；轻透星轨：无框极简风；原版舰桥：复古方块按键'),
       sw('compactSidebar', '紧凑侧栏', '顶部入口收成一排图标、底部按钮收成两排，会话列表更长'),
+      seg('侧栏风格', [['starlight', '星辉玻璃'], ['pixel', '像素舰桥']], p.sidebarStyle || 'starlight', (v) => store.set({ sidebarStyle: v }), '星辉：圆角玻璃图块、渐变新会话按钮、角色卡入口；像素：原版九宫格像素框'),
       sw('polestarSlider', '启明星光刃滑块', '思考强度滑块换成「永远的启明星」粉青光刃与像素星屑粒子'),
       sw('capsuleClamp', '手机面板防溢出', '窄屏下模型面板左右贴边、加大点按行高')));
 
@@ -268,11 +273,18 @@ function mountPanel(host, ctx) {
   }
 
   render();
-  const off = store.subscribe(render);
+  let lastPrefs = store.get();
+  const off = store.subscribe(p => {
+    const changed = Object.keys(p).filter(k => p[k] !== lastPrefs[k]);
+    lastPrefs = p;
+    if (!changed.length || changed.some(k => !switches.has(k))) { render(); return; }
+    for (const key of changed) switches.get(key).setAttribute('aria-checked', String(!!p[key]));
+  });
+  let lastThemeKey;
   const onTheme = setInterval(() => {
     const snap = theme?.getTheme?.();
     const key = snap ? `${snap.preference}|${snap.fontSize}` : '';
-    if (key !== onTheme.key) { if (onTheme.key !== undefined) render(); onTheme.key = key; }
+    if (key !== lastThemeKey) { if (lastThemeKey !== undefined) render(); lastThemeKey = key; }
   }, 1000);
   return () => { off(); clearInterval(onTheme); root.remove(); offStyle(); };
 }
@@ -295,3 +307,4 @@ function openSheet(ctx) {
 }
 
 module.exports = { mountPanel, openSheet };
+

@@ -12,6 +12,10 @@ function buildCss() {
   const R = 'html[data-aemeath][data-ae-set-style="resonance"]';
   const D = `${R} [data-shortcut-modal="settings"]`;
   const O = `${R} [class*="VOzbGW_overlay"]:has([data-shortcut-modal="settings"])`;
+  // shared by both deck layouts (palette vars + page-flip effects)
+  const RA = 'html[data-aemeath]:is([data-ae-set-style="resonance"],[data-ae-set-style="starlight"])';
+  const DA = `${RA} [data-shortcut-modal="settings"]`;
+  const OA = `${RA} [class*="VOzbGW_overlay"]:has([data-shortcut-modal="settings"])`;
   const CUT = (n) => `polygon(${n}px 0,100% 0,100% calc(100% - ${n}px),calc(100% - ${n}px) 100%,0 100%,0 ${n}px)`;
   const OPT = `${D}[data-ae-deck] [class*="VOzbGW_options"]`;
   const GEN = `${OPT} [class*="_WvWnq_section"]`;
@@ -19,10 +23,10 @@ function buildCss() {
   const BR = (c, l, w) => ['left top', 'right top', 'left bottom', 'right bottom']
     .map((pos) => `linear-gradient(${c},${c}) ${pos}/${l}px ${w} no-repeat,linear-gradient(${c},${c}) ${pos}/${w} ${l}px no-repeat`).join(',');
   const ROWS = ':is([class*="Pt1bsG_row"],[class*="hVGvvW_row"],[class*="oY77xG_row"],[class*="T1PP_q_row"],[class*="bVCLcG_row"],[class*="_8HJdBW_group"],[class*="yIbyla_row"])';
-  const TITLES = ':is([class*="Pt1bsG_title"],[class*="hVGvvW_title"],[class*="oY77xG_title"],[class*="T1PP_q_title"],[class*="bVCLcG_title"],[class*="_8HJdBW_title"],[class*="yIbyla_title"])';
+  const TITLES = ':is([class*="Pt1bsG_title"],[class*="hVGvvW_title"],[class*="oY77xG_title"],[class*="T1PP_q_title"],[class*="bVCLcG_title"],[class*="_8HJdBW_title"],[class*="yIbyla_title"],[class*="iVn_pq_title"])';
 
   return `
-${R}{
+${RA}{
   --rs-ink:#0a0b1a; --rs-ink2:#11132a; --rs-ink3:#1a1c3a; --rs-glass:rgba(17,19,42,.78);
   --rs-line:rgba(170,160,255,.16); --rs-line2:rgba(170,160,255,.30);
   --rs-pink:#ff7cc4; --rs-pink-rgb:255,124,196; --rs-cyan:#7fe9ff; --rs-cyan-rgb:127,233,255;
@@ -45,7 +49,7 @@ ${D}[data-ae-deck]{
   --dsw-alias-border-l1:var(--rs-line); --dsw-alias-border-l2:var(--rs-line); --dsw-alias-border-l3:var(--rs-line); --dsw-alias-border-l4:var(--rs-line2);
   --dsw-alias-interactive-bg-hover:rgba(var(--rs-pink-rgb),.08); --dsw-alias-brand-primary:var(--rs-pink);
   --dsw-alias-bg-layer-1:var(--rs-ink2); --dsw-alias-bg-layer-2:var(--rs-ink); --dsw-alias-bg-module-platform:rgba(var(--rs-pink-rgb),.12);
-  display:grid !important;grid-template-columns:minmax(0,1fr) !important;grid-template-rows:auto auto minmax(0,1fr) auto !important;
+  display:grid !important;grid-template-areas:none !important;grid-template-columns:minmax(0,1fr) !important;grid-template-rows:auto auto minmax(0,1fr) auto !important;
   width:min(880px,calc(100vw - 48px)) !important;max-width:none !important;height:min(720px,calc(100dvh - 48px)) !important;max-height:none !important;
   padding:0 !important;overflow:hidden !important;position:relative;isolation:isolate;color:var(--rs-text) !important;
   border-radius:6px !important;border:1px solid var(--rs-line2) !important;clip-path:none !important;
@@ -54,8 +58,8 @@ ${D}[data-ae-deck]{
     repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 72px),
     linear-gradient(180deg,var(--rs-ink2),var(--rs-ink)) !important;
   box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 0 5px rgba(var(--rs-gold-rgb),.06),0 32px 90px rgba(0,0,0,.7) !important;
-  animation:ae-rs-open .32s cubic-bezier(.2,.8,.2,1) .06s both}
-@keyframes ae-rs-open{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+  animation:ae-rs-open .18s cubic-bezier(.2,.8,.2,1) both}
+@keyframes ae-rs-open{from{opacity:0;transform:translate3d(0,6px,0)}to{opacity:1;transform:none}}
 /* star-gold hairline corners */
 ${D}[data-ae-deck]::before,${D}[data-ae-deck]::after{content:"";position:absolute;width:18px;height:18px;pointer-events:none;z-index:6;border:1px solid var(--rs-gold);opacity:.7}
 ${D}[data-ae-deck]::before{left:6px;top:6px;border-right:0;border-bottom:0}
@@ -64,14 +68,17 @@ ${D}[data-ae-deck]::after{right:6px;bottom:6px;border-left:0;border-top:0}
 /* the shipped nav stays mounted (we forward clicks to it). Its list/title are
    hidden; on 0.2.1 the content header (close + actions) can live inside the nav,
    so the nav itself is pinned into the head row's right corner. */
-${D}[data-ae-deck] > nav[class*="VOzbGW_nav"]{position:absolute !important;top:0 !important;right:10px !important;left:auto !important;bottom:auto !important;
-  width:auto !important;height:58px !important;min-height:0 !important;padding:0 !important;margin:0 !important;border:0 !important;background:none !important;
+${D}[data-ae-deck] > [class*="VOzbGW_navTitle"]{display:none !important}
+${D}[data-ae-deck] > nav[class*="VOzbGW_nav"]{grid-area:auto !important;position:absolute !important;top:0 !important;right:10px !important;left:auto !important;bottom:auto !important;
+  width:auto !important;height:58px !important;min-height:0 !important;padding:0 !important;margin:0 !important;border:0 !important;background:none !important;pointer-events:none !important;
   display:flex !important;flex-direction:row !important;align-items:center !important;z-index:7;overflow:visible !important;box-shadow:none !important}
+${D}[data-ae-deck] > nav[class*="VOzbGW_nav"] > [class*="VOzbGW_header"]{pointer-events:auto !important}
 ${D}[data-ae-deck] > nav[class*="VOzbGW_nav"] > :not([class*="VOzbGW_header"]){display:none !important}
-${D}[data-ae-deck] > [class*="VOzbGW_content"]{grid-row:3;min-height:0 !important;display:flex !important;flex-direction:column !important;position:static !important;overflow:hidden}
+${D}[data-ae-deck] > [class*="VOzbGW_content"]{grid-area:3 / 1 !important;grid-column:1 !important;grid-row:3 !important;min-width:0 !important;min-height:0 !important;display:flex !important;flex-direction:column !important;position:static !important;overflow:hidden}
+${D}[data-ae-deck] > [class*="VOzbGW_options"]{grid-area:3 / 1 !important;grid-column:1 !important;grid-row:3 !important;width:100% !important;min-width:0 !important;min-height:0 !important;box-sizing:border-box !important;position:static !important}
 
 /* ---------- head: centred title, close top-right (忘却前夜 工具式设置) ---------- */
-${D} .ae-st-head{grid-row:1;position:relative;display:flex;align-items:center;justify-content:center;gap:10px;height:58px;padding:0 64px;
+${D} .ae-st-head{grid-column:1;grid-row:1;position:relative;display:flex;align-items:center;justify-content:center;gap:10px;height:58px;padding:0 64px;
   border-bottom:1px solid var(--rs-line)}
 ${D} .ae-st-mark{width:26px;height:26px;flex:none;background:url("${asset('dsu-emblem.webp')}") center/contain no-repeat;filter:drop-shadow(0 0 6px rgba(var(--rs-pink-rgb),.5))}
 ${D} .ae-st-title{display:flex;flex-direction:column;align-items:center;line-height:1}
@@ -80,8 +87,9 @@ ${D} .ae-st-title small{margin-top:5px;font:600 9px/1 var(--rs-data);letter-spac
 /* content header: only the close button (and plugin actions), floated up into the head row */
 ${D}[data-ae-deck] [class*="VOzbGW_header"]{position:static !important;width:auto !important;height:auto !important;min-height:0 !important;padding:0 !important;border:0 !important;
   display:flex !important;align-items:center !important;gap:8px;background:none !important}
-/* if the header stays inside the content column instead, lift it into the head row */
-${D}[data-ae-deck] > [class*="VOzbGW_content"] > [class*="VOzbGW_header"]{position:absolute !important;top:0;right:10px;height:58px;z-index:7}
+/* if the header stays inside the content column or is a direct child (0.2.2), lift it into the head row */
+${D}[data-ae-deck] > [class*="VOzbGW_header"],
+${D}[data-ae-deck] > [class*="VOzbGW_content"] > [class*="VOzbGW_header"]{grid-area:auto !important;position:absolute !important;top:0 !important;right:10px !important;height:58px !important;z-index:7 !important}
 ${D}[data-ae-deck] [class*="VOzbGW_header"]::before{content:none !important}
 ${D}[data-ae-deck] [class*="VOzbGW_close"]{width:36px !important;min-width:36px !important;height:36px !important;flex:none !important;display:flex !important;align-items:center;justify-content:center;border-radius:50% !important;border:1px solid var(--rs-line2) !important;
   background:rgba(0,0,0,.25) !important;color:var(--rs-text) !important;clip-path:none !important}
@@ -89,15 +97,16 @@ ${D}[data-ae-deck] [class*="VOzbGW_close"]:hover{border-color:var(--rs-pink) !im
 ${D}[data-ae-deck] [class*="VOzbGW_actions"] button{border-radius:999px !important;border:1px solid var(--rs-line2) !important;background:rgba(0,0,0,.2) !important;
   color:var(--rs-mute) !important;font:600 11px/1 var(--rs-data) !important;clip-path:none !important;height:30px}
 
+${D} .ae-st-crumb{display:none !important}
 /* ---------- pillars (星落 竖柱：选中项变宽、点亮、两侧光边) ---------- */
-${D} .ae-st-pillars{grid-row:2;display:flex;align-items:stretch;gap:0;height:150px;padding:0 10px;overflow-x:auto;overflow-y:hidden;
+${D} .ae-st-pillars{grid-column:1;grid-row:2;display:flex;align-items:stretch;gap:0;height:150px;padding:0 10px;overflow-x:auto;overflow-y:hidden;
   scrollbar-width:none;border-bottom:1px solid var(--rs-line);position:relative;
   background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,0) 70%),
     repeating-linear-gradient(0deg,rgba(var(--rs-cyan-rgb),.035) 0 1px,transparent 1px 6px)}
 ${D} .ae-st-pillars::-webkit-scrollbar{display:none}
 ${D} .ae-pl{--w:64px;position:relative;flex:0 0 var(--w);width:var(--w);min-width:0;margin:0;padding:12px 0 10px;border:0;border-radius:0;
   background:transparent;color:var(--rs-mute);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;overflow:hidden;
-  transition:flex-basis .34s cubic-bezier(.2,.8,.2,1),width .34s cubic-bezier(.2,.8,.2,1),color .2s,background .3s;-webkit-tap-highlight-color:transparent}
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation}
 /* thin vertical separators */
 ${D} .ae-pl + .ae-pl::before{content:"";position:absolute;left:0;top:18%;bottom:18%;width:1px;background:linear-gradient(180deg,transparent,var(--rs-line2),transparent)}
 ${D} .ae-pl:hover{color:var(--rs-text);background:linear-gradient(180deg,rgba(255,255,255,.03),transparent)}
@@ -113,14 +122,13 @@ ${D} .ae-pl-en{position:absolute;left:0;right:0;bottom:10px;text-align:center;fo
 /* the lit pillar */
 ${D} .ae-pl[data-active]{--w:clamp(132px,22%,190px);color:#fff;
   background:
+    linear-gradient(90deg,rgba(var(--rs-pink-rgb),.30),transparent 16%,transparent 84%,rgba(var(--rs-pink-rgb),.30)),
     linear-gradient(180deg,rgba(var(--rs-pink-rgb),.26),rgba(var(--rs-pink-rgb),.06) 55%,rgba(var(--rs-cyan-rgb),.10)),
     repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 4px);
   box-shadow:inset 1px 0 0 var(--rs-pink),inset -1px 0 0 var(--rs-pink),inset 0 2px 0 rgba(var(--rs-pink-rgb),.9);
-  animation:ae-rs-lit .5s ease-out}
-${D} .ae-pl[data-active]::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(90deg,rgba(var(--rs-pink-rgb),.35),transparent 14%,transparent 86%,rgba(var(--rs-pink-rgb),.35));filter:blur(4px);opacity:.8}
+  animation:ae-rs-lit .36s ease-out}
 ${D} .ae-pl[data-active] .ae-pl-no{color:var(--rs-gold)}
-${D} .ae-pl[data-active] .ae-pl-ico{width:26px;height:26px;transform:translateY(2px);filter:drop-shadow(0 0 6px rgba(var(--rs-pink-rgb),.9))}
+${D} .ae-pl[data-active] .ae-pl-ico{width:26px;height:26px;transform:translateY(2px);filter:drop-shadow(0 0 5px rgba(var(--rs-pink-rgb),.85))}
 /* desktop: pillars share the full width (few pillars no longer leave an empty right half) */
 @media (min-width:761px){
   ${D} .ae-pl{flex:1 1 var(--w);max-width:150px}
@@ -130,10 +138,10 @@ ${D} .ae-pl[data-active] .ae-pl-ico{width:26px;height:26px;transform:translateY(
 }
 
 ${D} .ae-pl[data-active] .ae-pl-en{opacity:.9;transform:none}
-@keyframes ae-rs-lit{0%{filter:brightness(1.8) saturate(1.4)}30%{filter:brightness(.8)}45%{filter:brightness(1.5)}100%{filter:none}}
+@keyframes ae-rs-lit{0%{opacity:.58}32%{opacity:1}56%{opacity:.82}100%{opacity:1}}
 
 /* ---------- page: 鸣潮 data bars — name left, control right ---------- */
-${OPT}{flex:1;min-height:0;overflow:auto !important;padding:18px 22px 28px !important;scrollbar-width:thin;scrollbar-color:rgba(var(--rs-pink-rgb),.35) transparent}
+${OPT}{flex:1;min-height:0;overflow:auto !important;overscroll-behavior:contain;contain:content;padding:18px 22px 28px !important;scrollbar-width:thin;scrollbar-color:rgba(var(--rs-pink-rgb),.35) transparent}
 /* every setting row of the general page (the shipped classes end in _row / _setting;
    *_rowText must NOT match — that was the card-in-card overflow) */
 ${GEN} ${ROW}{display:grid !important;grid-template-columns:minmax(0,1fr) auto !important;align-items:center !important;column-gap:14px !important;row-gap:12px !important;
@@ -174,15 +182,16 @@ ${OPT} select{appearance:none;-webkit-appearance:none;height:34px;padding:0 28px
 ${OPT} select option{background:#15172e;color:var(--rs-text)}
 /* third-party switches (e.g. 大肥鱼 .re-setting-switch) take the same OFF/ON plate */
 ${OPT} button:is(.re-setting-switch){position:relative;width:56px !important;height:26px !important;border-radius:3px !important;border:1px solid rgba(170,160,255,.32) !important;
-  background:rgba(0,0,0,.4) !important;box-shadow:inset 0 0 8px rgba(0,0,0,.6) !important}
+  background:rgba(0,0,0,.4) !important;box-shadow:inset 0 0 8px rgba(0,0,0,.6) !important;touch-action:manipulation}
 ${OPT} button:is(.re-setting-switch).is-on{border-color:var(--rs-pink) !important;background:linear-gradient(90deg,rgba(var(--rs-pink-rgb),.95),#ffb0dc) !important;box-shadow:0 0 12px rgba(var(--rs-pink-rgb),.5) !important}
 ${OPT} button:is(.re-setting-switch)::after{content:"" !important;position:absolute !important;top:50% !important;left:8px !important;width:10px !important;height:10px !important;margin-top:-5px;
-  transform:rotate(45deg) !important;border-radius:1px !important;background:var(--rs-mute) !important;box-shadow:none !important;transition:left .2s}
-${OPT} button:is(.re-setting-switch).is-on::after{left:calc(100% - 18px) !important;background:#fff !important;box-shadow:0 0 6px #fff !important}
+  transform:translate3d(0,0,0) rotate(45deg) !important;border-radius:1px !important;background:var(--rs-mute) !important;box-shadow:none !important;transition:transform .18s cubic-bezier(.2,.8,.2,1),background-color .18s}
+${OPT} button:is(.re-setting-switch).is-on::after{transform:translate3d(28px,0,0) rotate(45deg) !important;background:#fff !important;box-shadow:0 0 6px #fff !important}
 ${OPT} button:is(.re-setting-switch) > *{display:none !important}
 ${OPT} .re-setting-state{font:700 9px/1 var(--rs-data) !important;letter-spacing:1px;color:var(--rs-gold) !important}
 
 /* ---------- controls ---------- */
+${OPT} :is(button,select,input,a,[role="button"],[role="switch"],[role="tab"]){touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 /* dropdown: a value plate with a pink diamond and an under-glow (鸣潮 设置下拉) */
 ${OPT} button:is([class*="_selector"],[aria-haspopup="listbox"],[aria-haspopup="menu"]){position:relative;height:36px !important;min-height:36px;padding:0 12px 0 24px !important;gap:8px;
   border-radius:3px !important;clip-path:none !important;border:1px solid rgba(170,160,255,.24) !important;
@@ -192,17 +201,18 @@ ${OPT} button:is([class*="_selector"],[aria-haspopup="listbox"],[aria-haspopup="
 ${OPT} button:is([class*="_selector"],[aria-haspopup="listbox"],[aria-haspopup="menu"]) svg{color:var(--rs-pink) !important}
 ${OPT} button:is([class*="_selector"],[aria-haspopup="listbox"],[aria-haspopup="menu"]):is(:hover,[aria-expanded="true"]){border-color:rgba(var(--rs-pink-rgb),.7) !important;
   box-shadow:inset 0 -2px 0 var(--rs-pink),0 0 14px rgba(var(--rs-pink-rgb),.3) !important}
-/* switch: OFF / ON track with a diamond thumb */
+/* switch: OFF / ON track with a diamond thumb (GPU-composited transform) */
 ${OPT} button[role="switch"][class*="_switch_"]{position:relative;flex:none !important;justify-self:end;width:56px !important;min-width:56px !important;max-width:56px !important;height:26px !important;padding:0 !important;
   border-radius:3px !important;border:1px solid rgba(170,160,255,.32) !important;overflow:hidden;cursor:pointer;
-  background:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 2px,transparent 2px 5px),rgba(0,0,0,.4) !important;box-shadow:inset 0 0 8px rgba(0,0,0,.6) !important;transition:background .2s,box-shadow .2s}
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 2px,transparent 2px 5px),rgba(0,0,0,.4) !important;box-shadow:inset 0 0 8px rgba(0,0,0,.6) !important;transition:background-color .18s,border-color .18s}
 ${OPT} button[role="switch"][class*="_switch_"]::after{content:"OFF";position:absolute;right:7px;top:50%;transform:translateY(-50%);font:700 8px/1 var(--rs-data);letter-spacing:1px;color:var(--rs-dim)}
 ${OPT} button[role="switch"][class*="_switch_"] > *{position:absolute !important;left:7px !important;top:50% !important;width:10px !important;height:10px !important;margin:-5px 0 0 !important;
-  transform:none !important;rotate:45deg;border-radius:1px !important;background:var(--rs-mute) !important;box-shadow:none !important;transition:left .22s cubic-bezier(.2,.8,.2,1),background .2s}
+  rotate:none !important;transform:translate3d(0,0,0) rotate(45deg) !important;border-radius:1px !important;background:var(--rs-mute) !important;box-shadow:none !important;
+  transition:transform .18s cubic-bezier(.2,.8,.2,1),background-color .18s;will-change:transform}
 ${OPT} button[role="switch"][class*="_switch_"][aria-checked="true"]{border-color:var(--rs-pink) !important;
   background:linear-gradient(90deg,rgba(var(--rs-pink-rgb),.95),#ffb0dc) !important;box-shadow:0 0 12px rgba(var(--rs-pink-rgb),.5),inset 0 1px 0 rgba(255,255,255,.5) !important}
 ${OPT} button[role="switch"][class*="_switch_"][aria-checked="true"]::after{content:"ON";right:auto;left:8px;color:#3a0c26}
-${OPT} button[role="switch"][class*="_switch_"][aria-checked="true"] > *{left:calc(100% - 17px) !important;background:#fff !important;box-shadow:0 0 6px #fff !important}
+${OPT} button[role="switch"][class*="_switch_"][aria-checked="true"] > *{left:7px !important;transform:translate3d(30px,0,0) rotate(45deg) !important;background:#fff !important;box-shadow:0 0 6px #fff !important}
 /* theme cubes: tiles with corner brackets, lit one gets a ✦ */
 ${OPT} button[class*="_8HJdBW_themeCube"]{position:relative;border-radius:3px !important;clip-path:none !important;border:1px solid rgba(170,160,255,.2) !important;
   background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.28)) !important;color:var(--rs-mute) !important;box-shadow:none !important}
@@ -263,15 +273,15 @@ ${D}[data-ae-deck] [class*="pbvGtq_tab"][aria-selected="true"]{color:#fff !impor
 ${D}[data-ae-deck] code,${D}[data-ae-deck] [class*="qSYn7G_cardMeta"] > *{border-radius:2px !important;font-family:var(--rs-data) !important}
 
 /* ---------- foot: scene tabs + page counter + arrows ---------- */
-${D} .ae-st-foot{grid-row:4;position:relative;display:flex;align-items:center;gap:10px;height:60px;padding:0 14px calc(env(safe-area-inset-bottom,0px));
+${D} .ae-st-foot{grid-column:1;grid-row:4;position:relative;display:flex;align-items:center;gap:10px;height:60px;padding:0 14px calc(env(safe-area-inset-bottom,0px));
   border-top:1px solid var(--rs-line);background:linear-gradient(0deg,rgba(0,0,0,.30),rgba(0,0,0,.08))}
 ${D} .ae-st-progress{position:absolute;left:0;right:0;top:-1px;height:2px;overflow:hidden;background:rgba(255,255,255,.04);pointer-events:none}
-${D} .ae-st-progress::after{content:"";position:absolute;top:0;height:2px;width:calc(100% / var(--n,1));left:calc(100% / var(--n,1) * var(--a,0));
-  background:linear-gradient(90deg,transparent,var(--rs-pink),transparent);box-shadow:0 0 8px var(--rs-pink);transition:left .34s cubic-bezier(.2,.8,.2,1),width .34s}
+${D} .ae-st-progress::after{content:"";position:absolute;top:0;left:0;height:2px;width:calc(100% / var(--n,1));transform:translateX(calc(100% * var(--a,0)));
+  background:linear-gradient(90deg,transparent,var(--rs-pink),transparent);box-shadow:0 0 8px var(--rs-pink);transition:transform .18s ease-out}
 ${D} .ae-st-tabs{flex:1;display:flex;justify-content:center;gap:6px;min-width:0}
 ${D} .ae-st-foot:not([data-split]) .ae-st-tabs{visibility:hidden}
 ${D} .ae-st-tab{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:84px;height:44px;padding:6px 14px 0;border:0;background:transparent;cursor:pointer;
-  color:var(--rs-dim);transition:color .2s,transform .2s;-webkit-tap-highlight-color:transparent}
+  color:var(--rs-dim);transition:color .2s,transform .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 ${D} .ae-st-tab b{font:400 15px/1 var(--rs-px);letter-spacing:3px}
 ${D} .ae-st-tab small{font:600 8px/1 var(--rs-data);letter-spacing:2px;opacity:.75}
 ${D} .ae-st-tab:hover{color:var(--rs-mute)}
@@ -282,110 +292,121 @@ ${D} .ae-st-tab[data-active]::after{content:"";position:absolute;left:18%;right:
 ${D} .ae-st-count{flex:none;min-width:58px;text-align:right;font:600 11px/1 var(--rs-data);color:var(--rs-dim);letter-spacing:1px}
 ${D} .ae-st-count b{font:400 20px/1 var(--rs-px);color:var(--rs-text);margin-right:3px}
 ${D} .ae-st-arrow{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--rs-line2);background:rgba(0,0,0,.2);color:var(--rs-text);cursor:pointer;position:relative;
-  -webkit-tap-highlight-color:transparent;transition:border-color .2s,color .2s,opacity .2s}
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:border-color .2s,color .2s,opacity .2s}
 ${D} .ae-st-arrow::before{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;border:solid currentColor;border-width:0 0 2px 2px;transform:translate(-30%,-50%) rotate(45deg)}
 ${D} .ae-st-arrow[data-dir="1"]::before{transform:translate(-70%,-50%) rotate(-135deg)}
 ${D} .ae-st-arrow:hover:not(:disabled){border-color:var(--rs-pink);color:var(--rs-pink)}
 ${D} .ae-st-arrow:disabled{opacity:.3;cursor:default}
 
-/* ---------- page flips ---------- */
-${D} .ae-st-beam{position:absolute;left:0;right:0;top:208px;bottom:60px;pointer-events:none;z-index:8;opacity:0}
-/* scan (default): a resonance beam sweeps across, the page wipes in behind it */
-${D}[data-ae-flip][data-ae-fx="scan"] [class*="VOzbGW_options"]{animation:ae-rs-wipe-n .52s cubic-bezier(.3,.7,.2,1) both}
-${D}[data-ae-flip="prev"][data-ae-fx="scan"] [class*="VOzbGW_options"]{animation-name:ae-rs-wipe-p}
-${D}[data-ae-flip][data-ae-fx="scan"] .ae-st-beam{opacity:1;animation:ae-rs-beam-n .52s cubic-bezier(.3,.7,.2,1) both;
-  background:linear-gradient(90deg,transparent calc(var(--x) - 70px),rgba(var(--rs-pink-rgb),.0) calc(var(--x) - 70px),rgba(var(--rs-pink-rgb),.20) calc(var(--x) - 6px),#fff var(--x),rgba(var(--rs-cyan-rgb),.5) calc(var(--x) + 2px),transparent calc(var(--x) + 18px))}
-${D}[data-ae-flip="prev"][data-ae-fx="scan"] .ae-st-beam{animation-name:ae-rs-beam-p;
-  background:linear-gradient(270deg,transparent calc(var(--x) - 70px),rgba(var(--rs-pink-rgb),.20) calc(var(--x) - 6px),#fff var(--x),rgba(var(--rs-cyan-rgb),.5) calc(var(--x) + 2px),transparent calc(var(--x) + 18px))}
+/* ---------- page flips (original resonance scan / slide / bump + intensified original .ae-gl decrypt) ---------- */
+${DA} .ae-st-beam{position:absolute;left:0;right:0;top:208px;bottom:60px;pointer-events:none;z-index:8;opacity:0}
+/* lightweight open: crisp quick beam sweep without heavy boot clone */
+${DA}[data-ae-flip="open"] .ae-st-beam{opacity:1;animation:ae-rs-open-beam .22s ease-out both;
+  background:linear-gradient(180deg,transparent,rgba(var(--rs-cyan-rgb),.45) 35%,#fff 50%,rgba(var(--rs-pink-rgb),.55) 65%,transparent) 0 0/100% 36px no-repeat}
+@keyframes ae-rs-open-beam{from{transform:translate3d(0,0,0);opacity:.9}to{transform:translate3d(0,100%,0);opacity:0}}
+/* scan: a resonance beam sweeps across, the page wipes in behind it */
+${DA}[data-ae-flip][data-ae-fx="scan"] [class*="VOzbGW_options"]{animation:ae-rs-wipe-n .44s cubic-bezier(.3,.7,.2,1) both}
+${DA}[data-ae-flip="prev"][data-ae-fx="scan"] [class*="VOzbGW_options"]{animation-name:ae-rs-wipe-p}
+${DA}[data-ae-flip][data-ae-fx="scan"] .ae-st-beam{opacity:1;animation:ae-rs-beam-n .44s cubic-bezier(.3,.7,.2,1) both;
+  background:linear-gradient(90deg,transparent calc(var(--x) - 70px),rgba(var(--rs-pink-rgb),.0) calc(var(--x) - 70px),rgba(var(--rs-pink-rgb),.24) calc(var(--x) - 6px),#fff var(--x),rgba(var(--rs-cyan-rgb),.55) calc(var(--x) + 2px),transparent calc(var(--x) + 18px))}
+${DA}[data-ae-flip="prev"][data-ae-fx="scan"] .ae-st-beam{animation-name:ae-rs-beam-p;
+  background:linear-gradient(270deg,transparent calc(var(--x) - 70px),rgba(var(--rs-pink-rgb),.24) calc(var(--x) - 6px),#fff var(--x),rgba(var(--rs-cyan-rgb),.55) calc(var(--x) + 2px),transparent calc(var(--x) + 18px))}
 @property --x{syntax:"<length-percentage>";inherits:false;initial-value:0%}
 @keyframes ae-rs-beam-n{from{--x:0%}to{--x:calc(100% + 80px)}}
 @keyframes ae-rs-beam-p{from{--x:0%}to{--x:calc(100% + 80px)}}
 @keyframes ae-rs-wipe-n{from{clip-path:inset(0 100% 0 0);transform:translateX(18px);opacity:.4}to{clip-path:inset(0 0 0 0);transform:none;opacity:1}}
 @keyframes ae-rs-wipe-p{from{clip-path:inset(0 0 0 100%);transform:translateX(-18px);opacity:.4}to{clip-path:inset(0 0 0 0);transform:none;opacity:1}}
-/* scene change (系统 ↔ 模组): whole deck re-tunes — pillars drop in staggered */
-${D}[data-ae-flip="scene"] .ae-pl{animation:ae-rs-drop .42s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 32ms)}
-${D}[data-ae-flip="scene"] [class*="VOzbGW_options"]{animation:ae-rs-tune .5s ease-out both}
+/* scene change (系统 ↔ 模组): pillars drop in staggered */
+${DA}[data-ae-flip="scene"] .ae-pl{animation:ae-rs-drop .42s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 32ms)}
 @keyframes ae-rs-drop{from{transform:translateY(-26px);opacity:0}to{transform:none;opacity:1}}
-@keyframes ae-rs-tune{0%{opacity:0;filter:blur(6px) hue-rotate(40deg)}60%{opacity:1;filter:blur(0)}100%{filter:none}}
-/* glitch: electronic-ghost tear */
-${D}[data-ae-flip][data-ae-fx="glitch-lite"] [class*="VOzbGW_options"]{animation:ae-rs-glitch .5s steps(1) both}
+/* glitch-lite fallback */
+${DA}[data-ae-flip][data-ae-fx="glitch-lite"] [class*="VOzbGW_options"]{animation:ae-rs-glitch .5s steps(1) both}
 @keyframes ae-rs-glitch{
   0%{opacity:0;clip-path:inset(0 0 100% 0)}
-  12%{opacity:1;clip-path:inset(10% 0 62% 0);transform:translateX(-14px);filter:drop-shadow(3px 0 rgba(var(--rs-pink-rgb),.9)) drop-shadow(-3px 0 rgba(var(--rs-cyan-rgb),.9))}
-  28%{clip-path:inset(48% 0 20% 0);transform:translateX(10px)}
-  44%{clip-path:inset(0 0 40% 0);transform:translateX(-6px)}
-  60%{clip-path:inset(30% 0 0 0);transform:translateX(4px);filter:drop-shadow(2px 0 rgba(var(--rs-pink-rgb),.6))}
+  12%{opacity:1;clip-path:inset(10% 0 62% 0);transform:translateX(-18px);filter:drop-shadow(4px 0 rgba(var(--rs-pink-rgb),.95)) drop-shadow(-4px 0 rgba(var(--rs-cyan-rgb),.95))}
+  28%{clip-path:inset(48% 0 20% 0);transform:translateX(14px)}
+  44%{clip-path:inset(0 0 40% 0);transform:translateX(-9px)}
+  60%{clip-path:inset(30% 0 0 0);transform:translateX(6px);filter:drop-shadow(3px 0 rgba(var(--rs-pink-rgb),.75))}
   76%{clip-path:inset(0);transform:none;filter:none}
   100%{clip-path:inset(0);transform:none;filter:none;opacity:1}}
 /* slide: plain page slide */
-${D}[data-ae-flip="next"][data-ae-fx="slide"] [class*="VOzbGW_options"]{animation:ae-rs-slide-n .3s cubic-bezier(.2,.8,.2,1) both}
-${D}[data-ae-flip="prev"][data-ae-fx="slide"] [class*="VOzbGW_options"]{animation:ae-rs-slide-p .3s cubic-bezier(.2,.8,.2,1) both}
+${DA}[data-ae-flip="next"][data-ae-fx="slide"] [class*="VOzbGW_options"]{animation:ae-rs-slide-n .28s cubic-bezier(.2,.8,.2,1) both}
+${DA}[data-ae-flip="prev"][data-ae-fx="slide"] [class*="VOzbGW_options"]{animation:ae-rs-slide-p .28s cubic-bezier(.2,.8,.2,1) both}
 @keyframes ae-rs-slide-n{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
 @keyframes ae-rs-slide-p{from{transform:translateX(-40px);opacity:0}to{transform:none;opacity:1}}
 /* edge bump when there is no further page */
-${D}[data-ae-bump="end"] [class*="VOzbGW_options"]{animation:ae-rs-bump-e .35s ease-out}
-${D}[data-ae-bump="start"] [class*="VOzbGW_options"]{animation:ae-rs-bump-s .35s ease-out}
+${DA}[data-ae-bump="end"] [class*="VOzbGW_options"]{animation:ae-rs-bump-e .32s ease-out}
+${DA}[data-ae-bump="start"] [class*="VOzbGW_options"]{animation:ae-rs-bump-s .32s ease-out}
 @keyframes ae-rs-bump-e{40%{transform:translateX(-10px)}}
 @keyframes ae-rs-bump-s{40%{transform:translateX(10px)}}
-@media (prefers-reduced-motion:reduce){
-  ${D}[data-ae-flip] *,${D} .ae-pl{animation:none !important;transition:none !important}
-}
-/* ---------- glitch / decrypt page turn ---------- */
-/* The overlay owns the whole transition: the real page stays hidden until the
-   copy above it has decrypted, so the two never blend into a washed-out mix. */
-${D} .ae-gl{position:absolute;z-index:30;pointer-events:none;overflow:hidden;contain:strict;
-  background:rgba(var(--rs-ink-rgb,10,11,26),.94);animation:ae-gl-host var(--ae-gl-dur,.64s) linear both}
-${D} .ae-gl-inner{position:absolute;inset:0;margin:0 !important;overflow:hidden !important;pointer-events:none !important;
+/* ---------- original glitch / decrypt page turn (intensified) ---------- */
+${DA} .ae-gl{position:absolute;z-index:30;pointer-events:none;overflow:hidden;contain:strict;
+  background:rgba(var(--rs-ink-rgb,10,11,26),.95);animation:ae-gl-host var(--ae-gl-dur,.58s) linear both}
+${DA} .ae-gl-inner{position:absolute;inset:0;margin:0 !important;overflow:hidden !important;pointer-events:none !important;
   animation:none !important;transform:none !important}
-${D} .ae-gl-inner[data-gl="base"]{opacity:1;filter:contrast(1.15) saturate(1.25);
-  text-shadow:2px 0 rgba(var(--ae-pink-rgb),.75),-2px 0 rgba(var(--ae-cyan-rgb),.75),0 0 8px rgba(var(--ae-cyan-rgb),.45)}
-${D} .ae-gl-inner[data-gl="split-a"]{opacity:1;mix-blend-mode:screen;color:#ff4fbf !important;
-  background:rgba(var(--ae-pink-rgb),.14) !important;text-shadow:0 0 6px #ff4fbf}
-${D} .ae-gl-inner[data-gl="split-b"]{opacity:1;mix-blend-mode:screen;color:#4fe6ff !important;
-  background:rgba(var(--ae-cyan-rgb),.14) !important;text-shadow:0 0 6px #4fe6ff}
-${D} .ae-gl-inner *{color:inherit !important;border-color:currentColor !important;background-image:none !important}
-${D} .ae-gl-noise{position:absolute;inset:0;mix-blend-mode:screen}
-${D} .ae-gl-noise i{position:absolute;display:block;opacity:0;background:var(--c);
+${DA} .ae-gl-inner[data-gl="base"]{opacity:1;filter:contrast(1.18) saturate(1.3);
+  text-shadow:3px 0 rgba(var(--ae-pink-rgb),.88),-3px 0 rgba(var(--ae-cyan-rgb),.88),0 0 8px rgba(var(--ae-cyan-rgb),.45)}
+${DA} .ae-gl-inner[data-gl="split-a"]{opacity:1;mix-blend-mode:screen;color:#ff4fbf !important;
+  background:rgba(var(--ae-pink-rgb),.20) !important;text-shadow:0 0 7px #ff4fbf}
+${DA} .ae-gl-inner[data-gl="split-b"]{opacity:1;mix-blend-mode:screen;color:#4fe6ff !important;
+  background:rgba(var(--ae-cyan-rgb),.20) !important;text-shadow:0 0 7px #4fe6ff}
+${DA} .ae-gl-inner *{color:inherit !important;border-color:currentColor !important;background-image:none !important}
+${DA} .ae-gl-noise{position:absolute;inset:0;mix-blend-mode:screen}
+${DA} .ae-gl-noise i{position:absolute;display:block;opacity:0;background:var(--c);
   box-shadow:0 0 8px var(--c);image-rendering:pixelated}
-${D} .ae-gl-tear{position:absolute;inset:0;
-  background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 2px,rgba(var(--ae-pink-rgb),.38) 2px 3px,rgba(0,0,0,0) 3px 7px,rgba(var(--ae-cyan-rgb),.18) 7px 8px);
-  mix-blend-mode:screen;animation:ae-gl-tear var(--ae-gl-dur,.64s) steps(8) both}
-${D} .ae-gl[data-dir="prev"] .ae-gl-tear{animation-name:ae-gl-tear-p}
-${D} .ae-gl-beam{position:absolute;left:0;right:0;height:3px;top:0;
-  background:linear-gradient(90deg,transparent,rgba(var(--ae-cyan-rgb),.95) 20%,#fff 50%,rgba(var(--ae-pink-rgb),.95) 80%,transparent);
-  box-shadow:0 0 14px 3px rgba(var(--ae-pink-rgb),.7),0 0 4px #fff;animation:ae-gl-beam var(--ae-gl-dur,.64s) cubic-bezier(.5,0,.3,1) both}
-${D} .ae-gl[data-dir="prev"] .ae-gl-beam{animation-name:ae-gl-beam-p}
-${D} .ae-gl[data-boot]{animation-name:ae-gl-boot}
-${D} .ae-gl[data-boot] .ae-gl-beam{height:4px;animation-name:ae-gl-boot-beam}
-${D}[data-ae-flip][data-ae-fx="glitch"] [class*="VOzbGW_options"]:not(.ae-gl-inner){animation:ae-gl-in var(--ae-gl-dur,.64s) steps(1) both}
-/* lit pillar / counter flicker along with the page */
-${D}[data-ae-flip][data-ae-fx="glitch"] .ae-pl[data-active],
-${D}[data-ae-flip][data-ae-fx="glitch"] .ae-st-count{animation:ae-gl-chrome var(--ae-gl-dur,.64s) steps(1) both}
-${D}[data-ae-flip="scene"][data-ae-fx="glitch"] .ae-st-head,
-${D}[data-ae-flip="scene"][data-ae-fx="glitch"] .ae-st-foot{animation:ae-gl-chrome var(--ae-gl-dur,.9s) steps(1) both}
-${D}[data-ae-flip="scene"][data-ae-fx="glitch"] .ae-pl{animation:ae-gl-pill var(--ae-gl-dur,.9s) steps(1) both;animation-delay:calc(var(--i,0) * 28ms)}
-@keyframes ae-gl-host{0%,82%{opacity:1}100%{opacity:0}}
-@keyframes ae-gl-boot{0%{opacity:1;clip-path:inset(49.6% 0 49.6% 0)}9%{clip-path:inset(49.6% 0 49.6% 0);filter:brightness(3)}
-  18%{clip-path:inset(0 0 0 0);filter:brightness(1.8)}26%{filter:none}84%{opacity:1}100%{opacity:0;clip-path:inset(0)}}
-@keyframes ae-gl-tear{0%{opacity:.9;translate:0 -16px}30%{opacity:1;translate:0 8px}60%{opacity:.6;translate:0 -6px}100%{opacity:0;translate:0 0}}
-@keyframes ae-gl-tear-p{0%{opacity:.9;translate:0 16px}30%{opacity:1;translate:0 -8px}60%{opacity:.6;translate:0 6px}100%{opacity:0;translate:0 0}}
-@keyframes ae-gl-beam{0%{top:0;opacity:1}80%{opacity:1}100%{top:100%;opacity:0}}
-@keyframes ae-gl-beam-p{0%{top:100%;opacity:1}80%{opacity:1}100%{top:0;opacity:0}}
-@keyframes ae-gl-boot-beam{0%,8%{top:50%;opacity:1;transform:scaleX(.05)}16%{transform:scaleX(1)}22%{top:0}80%{opacity:1}100%{top:100%;opacity:0}}
-@keyframes ae-gl-in{0%,78%{opacity:0}79%{opacity:1;translate:-4px 0}86%{translate:3px 0}92%{translate:0 0}100%{opacity:1;translate:0 0}}
-@keyframes ae-gl-chrome{0%{opacity:.35;translate:-5px 0}12%{opacity:1;translate:4px 0}24%{opacity:.5;translate:-2px 0}36%{opacity:1;translate:0 0}
-  48%{opacity:.75}60%,100%{opacity:1;translate:0 0}}
-@keyframes ae-gl-pill{0%{opacity:0;translate:0 -10px}20%{opacity:1;translate:3px 0}35%{opacity:.4;translate:-3px 0}50%,100%{opacity:1;translate:0 0}}
-@media (prefers-reduced-motion:reduce){${D} .ae-gl{display:none}}
+${DA} .ae-gl-tear{position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 2px,rgba(var(--ae-pink-rgb),.46) 2px 3px,rgba(0,0,0,0) 3px 7px,rgba(var(--ae-cyan-rgb),.24) 7px 8px);
+  mix-blend-mode:screen;animation:ae-gl-tear var(--ae-gl-dur,.58s) steps(8) both}
+${DA} .ae-gl[data-dir="prev"] .ae-gl-tear{animation-name:ae-gl-tear-p}
+${DA} .ae-gl-beam{position:absolute;left:0;right:0;height:4px;top:0;
+  background:linear-gradient(90deg,transparent,rgba(var(--ae-cyan-rgb),.98) 18%,#fff 50%,rgba(var(--ae-pink-rgb),.98) 82%,transparent);
+  box-shadow:0 0 16px 3px rgba(var(--ae-pink-rgb),.8),0 0 5px #fff;animation:ae-gl-beam var(--ae-gl-dur,.58s) cubic-bezier(.5,0,.3,1) both}
+${DA} .ae-gl[data-dir="prev"] .ae-gl-beam{animation-name:ae-gl-beam-p}
+${DA} .ae-gl[data-boot]{animation-name:ae-gl-boot}
+${DA} .ae-gl[data-boot] .ae-gl-beam{height:5px;animation-name:ae-gl-boot-beam}
+${DA}[data-ae-flip][data-ae-fx="glitch"] [class*="VOzbGW_options"]:not(.ae-gl-inner){animation:ae-gl-in var(--ae-gl-dur,.66s) steps(1) both}
+${DA}[data-ae-flip][data-ae-fx="glitch"] .ae-pl[data-active],
+${DA}[data-ae-flip][data-ae-fx="glitch"] .ae-st-title,
+${DA}[data-ae-flip][data-ae-fx="glitch"] .ae-st-count{animation:ae-gl-chrome var(--ae-gl-dur,.66s) steps(1) both}
+${DA}[data-ae-flip="scene"][data-ae-fx="glitch"] .ae-st-head,
+${DA}[data-ae-flip="scene"][data-ae-fx="glitch"] .ae-st-foot{animation:ae-gl-chrome var(--ae-gl-dur,.78s) steps(1) both}
+${DA}[data-ae-flip="scene"][data-ae-fx="glitch"] .ae-pl{animation:ae-gl-pill var(--ae-gl-dur,.78s) steps(1) both;animation-delay:calc(var(--i,0) * 24ms)}
+@keyframes ae-gl-host{0%,84%{opacity:1}100%{opacity:0}}
+@keyframes ae-gl-boot{0%{opacity:1;clip-path:inset(49.2% 0 49.2% 0)}9%{clip-path:inset(49.2% 0 49.2% 0);filter:brightness(3)}
+  18%{clip-path:inset(0 0 0 0);filter:brightness(1.85)}26%{filter:none}86%{opacity:1}100%{opacity:0;clip-path:inset(0)}}
+@keyframes ae-gl-tear{0%{opacity:.95;translate:0 -20px}30%{opacity:1;translate:0 12px}60%{opacity:.72;translate:0 -8px}100%{opacity:0;translate:0 0}}
+@keyframes ae-gl-tear-p{0%{opacity:.95;translate:0 20px}30%{opacity:1;translate:0 -12px}60%{opacity:.72;translate:0 8px}100%{opacity:0;translate:0 0}}
+@keyframes ae-gl-beam{0%{top:0;opacity:1}82%{opacity:1}100%{top:100%;opacity:0}}
+@keyframes ae-gl-beam-p{0%{top:100%;opacity:1}82%{opacity:1}100%{top:0;opacity:0}}
+@keyframes ae-gl-boot-beam{0%,8%{top:50%;opacity:1;transform:scaleX(.05)}16%{transform:scaleX(1)}22%{top:0}82%{opacity:1}100%{top:100%;opacity:0}}
+@keyframes ae-gl-in{0%,80%{opacity:0}81%{opacity:1;translate:-6px 0}88%{translate:4px 0}94%{translate:-2px 0}100%{opacity:1;translate:0 0}}
+@keyframes ae-gl-chrome{0%{opacity:.32;translate:-7px 0}14%{opacity:1;translate:6px 0}28%{opacity:.45;translate:-4px 0}42%{opacity:1;translate:2px 0}
+  56%{opacity:.72}68%,100%{opacity:1;translate:0 0}}
+@keyframes ae-gl-pill{0%{opacity:0;translate:0 -12px}20%{opacity:1;translate:4px 0}35%{opacity:.4;translate:-4px 0}52%,100%{opacity:1;translate:0 0}}
+@media (prefers-reduced-motion:reduce){
+  ${DA}[data-ae-flip] *,${DA} .ae-pl,${DA} .ae-pl *,${DA} .ae-st-progress::after,${OA} [class*="VOzbGW_mask"]{animation:none !important;transition:none !important}
+  ${DA} .ae-gl{display:none !important}
+}
+
+/* pause background infinite animations whenever settings modal covers the app */
+body[data-ae-settings-open] #aemeath-bg .ae-star,
+body[data-ae-settings-open] .ae-doll,
+body[data-ae-settings-open] .re-effort-knob,
+body[data-ae-settings-open] .re-effort-track,
+body[data-ae-settings-open] [data-chat-running] *,
+body[data-ae-settings-open] [data-disclosure-row] *,
+body[data-ae-settings-open] [data-chat-flow-kind="assistant-step"]::after{animation-play-state:paused !important}
 
 /* ---------- phone: full-screen deck ---------- */
 @media (max-width:760px){
+  ${O} [class*="VOzbGW_mask"]{background:#0a0b1a !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important;animation:none}
   ${D}[data-ae-deck]{width:100vw !important;height:100dvh !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;
     padding-top:env(safe-area-inset-top,0px) !important}
   ${D}[data-ae-deck]::before{top:calc(env(safe-area-inset-top,0px) + 6px)}
   ${D} .ae-st-head{height:52px;padding:0 56px}
   ${D}[data-ae-deck] > nav[class*="VOzbGW_nav"]{top:env(safe-area-inset-top,0px) !important;height:52px !important;right:8px !important}
-  ${D}[data-ae-deck] > [class*="VOzbGW_content"] > [class*="VOzbGW_header"]{top:env(safe-area-inset-top,0px);height:52px;right:8px}
+  ${D}[data-ae-deck] > [class*="VOzbGW_header"],
+  ${D}[data-ae-deck] > [class*="VOzbGW_content"] > [class*="VOzbGW_header"]{top:env(safe-area-inset-top,0px) !important;height:52px !important;right:8px !important}
   ${D}[data-ae-deck] [class*="VOzbGW_close"]{width:40px !important;min-width:40px !important;height:40px !important}
   ${D}[data-ae-deck] [class*="VOzbGW_actions"]{display:none !important}
   ${D} .ae-st-title b{font-size:18px;letter-spacing:3px}
@@ -394,7 +415,6 @@ ${D}[data-ae-flip="scene"][data-ae-fx="glitch"] .ae-pl{animation:ae-gl-pill var(
   ${D} .ae-pl-zh{font-size:13px;max-height:62px}
   ${D} .ae-pl[data-active]{--w:132px}
   ${D} .ae-pl[data-active] .ae-pl-full{font-size:18px}
-  ${D} .ae-st-beam{top:180px}
   ${D}[data-ae-deck] [class*="VOzbGW_options"]{padding:14px 18px 22px !important}
   ${GEN} ${ROW}{padding:12px 12px 12px 24px !important;column-gap:10px !important}
   ${GEN} ${ROW}::before{left:9px}
@@ -407,3 +427,4 @@ ${D}[data-ae-flip="scene"][data-ae-fx="glitch"] .ae-pl{animation:ae-gl-pill var(
 }
 
 module.exports = { buildCss };
+

@@ -13,6 +13,105 @@ const svgUrl = (name) => {
   return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
 };
 
+// High-DPI Wuthering Waves x Aemeath vector icons for chat process & tool rows.
+const TOOL_ICONS = {
+  // Wuthering Waves Data Bank Calabash (声骸葫芦) + 4-point Polestar core
+  echo: '<path d="M10.2 3h3.6M12 3v1.6M9.3 7.6a2.85 2.85 0 0 1 5.4 0c.28.92.08 1.9-.62 2.52 2.02.92 3.42 2.9 3.42 5.23a5.5 5.5 0 0 1-11 0c0-2.33 1.4-4.31 3.42-5.23-.7-.62-.9-1.6-.62-2.52Z" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12.1l.68 2.12 2.12.68-2.12.68L12 17.7l-.68-2.12-2.12-.68 2.12-.68L12 12.1Z" fill="#000"/>',
+  // Holographic terminal prompt >_ with resonance spark (bash / pwsh)
+  bash: '<rect x="2.5" y="4" width="19" height="16" rx="3.4" fill="none" stroke="#000" stroke-width="1.8"/><path d="M7.2 9.4l3.3 2.7-3.3 2.7M12.4 15h4.3" fill="none" stroke="#000" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17.8" cy="7.4" r="1.15" fill="#000"/>',
+  // Starlight code matrix </> (run_code / 终端运算)
+  code: '<path d="M8.4 7.2L3.6 12l4.8 4.8M15.6 7.2L20.4 12l-4.8 4.8M13.6 5.6l-3.2 12.8" fill="none" stroke="#000" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>',
+  // Aemeath resonance frequency bars (救世中 / 调谐频率)
+  wave: '<path d="M3.5 10.5v3M7.75 7.2v9.6M12 4.2v15.6M16.25 7.2v9.6M20.5 10.5v3" fill="none" stroke="#000" stroke-width="2.15" stroke-linecap="round"/>',
+  // Holographic data slate (声痕解读 / read)
+  read: '<path d="M6.4 3.2h7.4L18.6 8v12.6a1.6 1.6 0 0 1-1.6 1.6H6.4a1.6 1.6 0 0 1-1.6-1.6V4.8a1.6 1.6 0 0 1 1.6-1.6Z" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.6 3.4V8h4.8M8.2 12.2h7.2M8.2 15.8h5" fill="none" stroke="#000" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>',
+  // Holo aperture frame + polestar sun (残像凝视 / read_image)
+  image: '<rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="#000" stroke-width="1.8"/><path d="M4.2 17.2l4.8-5 3.2 3.1 2.6-2.5 4.8 4.4" fill="none" stroke="#000" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.8 7l.45 1.35 1.35.45-1.35.45-.45 1.35-.45-1.35-1.35-.45 1.35-.45L15.8 7Z" fill="#000"/>',
+  // Starlight quill pen (谱写乐章 / write)
+  write: '<path d="M18.8 4.4a2.3 2.3 0 0 1 0 3.25L9.4 17.05 5 18.2l1.15-4.4L15.55 4.4a2.3 2.3 0 0 1 3.25 0Z" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.8 6.2l3.2 3.2M5 20.8h14" fill="none" stroke="#000" stroke-width="1.75" stroke-linecap="round"/>',
+  // Precision resonance edit stylus (变奏修订 / edit)
+  edit: '<path d="M11.5 4.5H6A2.5 2.5 0 0 0 3.5 7v11A2.5 2.5 0 0 0 6 20.5h11a2.5 2.5 0 0 0 2.5-2.5v-5.5" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/><path d="M17.8 3.8a1.9 1.9 0 0 1 2.7 2.7l-7.6 7.6-3.4.8.8-3.4 7.5-7.7Z" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  // Polestar radar magnifier (频率追踪 / grep / glob / search)
+  search: '<circle cx="10.6" cy="10.6" r="6.4" fill="none" stroke="#000" stroke-width="1.85"/><path d="M15.4 15.4l4.8 4.8" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><path d="M10.6 7.5l.56 2.54 2.54.56-2.54.56-.56 2.54-.56-2.54-2.54-.56 2.54-.56.56-2.54Z" fill="#000"/>',
+  // Solaris orbital globe (索拉里斯搜寻 / web)
+  web: '<circle cx="12" cy="12" r="7.5" fill="none" stroke="#000" stroke-width="1.75"/><ellipse cx="12" cy="12" rx="3.4" ry="7.5" fill="none" stroke="#000" stroke-width="1.45"/><path d="M4.8 12h14.4" fill="none" stroke="#000" stroke-width="1.5"/><path d="M3 15.6c3.6 1.7 14.4-3.2 18-7" fill="none" stroke="#000" stroke-width="1.55" stroke-linecap="round"/>',
+  // Hex starlight module core (dev_* / client_guard_* / cordis_*)
+  module: '<path d="M12 2.8l7.6 4.4v9.6L12 21.2l-7.6-4.4V7.2L12 2.8Z" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 8.1l.95 2.95L15.9 12l-2.95.95L12 15.9l-.95-2.95L8.1 12l2.95-.95L12 8.1Z" fill="#000"/>',
+  // Twin resonance stars (召唤共鸣者 / subagent)
+  subagent: '<path d="M9.5 4.2l1.25 4.05L14.8 9.5l-4.05 1.25L9.5 14.8l-1.25-4.05L4.2 9.5l4.05-1.25L9.5 4.2Z" fill="#000"/><path d="M17.2 12.2l.75 2.25 2.25.75-2.25.75-.75 2.25-.75-2.25-2.25-.75 2.25-.75.75-2.25Z" fill="#000"/><path d="M5.5 17.5a8.5 8.5 0 0 0 9.5 1.8" fill="none" stroke="#000" stroke-width="1.65" stroke-linecap="round"/>',
+  // Starlight checklist / scroll (plan / todo / skill / memory)
+  plan: '<rect x="4" y="3.5" width="16" height="17" rx="2.8" fill="none" stroke="#000" stroke-width="1.8"/><path d="M7.8 9l1.3 1.3 2.3-2.3M13.5 9.2h3M7.8 14.2l1.3 1.3 2.3-2.3M13.5 14.4h3" fill="none" stroke="#000" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>',
+  // Orbital chronometer (job / schedule)
+  clock: '<circle cx="12" cy="12" r="8.2" fill="none" stroke="#000" stroke-width="1.8"/><path d="M12 7.4V12l3.4 2.1" fill="none" stroke="#000" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>',
+  // Starlight transmission bubble (questions)
+  question: '<path d="M5 5h14a2.2 2.2 0 0 1 2.2 2.2v8.2A2.2 2.2 0 0 1 19 17.6h-7.8l-4.6 3.2v-3.2H5A2.2 2.2 0 0 1 2.8 15.4V7.2A2.2 2.2 0 0 1 5 5Z" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 8.2l.65 2.05 2.05.65-2.05.65L12 13.6l-.65-2.05-2.05-.65 2.05-.65L12 8.2Z" fill="#000"/>',
+  // Sleek workspace folder
+  folder: '<path d="M3.2 7.5a2 2 0 0 1 2-2h4.2l1.8 2h7.6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5.2a2 2 0 0 1-2-2v-10Z" fill="none" stroke="#000" stroke-width="1.8" stroke-linejoin="round"/>',
+};
+const vecSvgUrl = (name) => {
+  const body = TOOL_ICONS[name] || TOOL_ICONS.echo;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" shape-rendering="geometricPrecision">${body}</svg>`;
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+};
+
+// Holographic Aemeath Polestar + Orbital Ring + Paper-Plane watermark for the transmission card.
+const CARD_CREST_DARK = (() => {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">'
+    + '<defs>'
+    + '<linearGradient id="g" x1="12" y1="12" x2="108" y2="108" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#77e8ff"/><stop offset=".55" stop-color="#c89bff"/><stop offset="1" stop-color="#ff69b7"/></linearGradient>'
+    + '</defs>'
+    + '<circle cx="66" cy="66" r="46" stroke="url(#g)" stroke-width=".9" stroke-dasharray="3 5" opacity=".26"/>'
+    + '<circle cx="66" cy="66" r="34" stroke="#ff85c8" stroke-width=".85" opacity=".18"/>'
+    + '<ellipse cx="66" cy="66" rx="50" ry="18" transform="rotate(-26 66 66)" stroke="url(#g)" stroke-width="1" opacity=".28"/>'
+    + '<path d="M66 36l4.8 25.2L96 66l-25.2 4.8L66 96l-4.8-25.2L36 66l25.2-4.8L66 36Z" fill="url(#g)" opacity=".18"/>'
+    + '<path d="M66 47l2.5 16.5L85 66l-16.5 2.5L66 85l-2.5-16.5L47 66l16.5-2.5L66 47Z" fill="#ffffff" opacity=".22"/>'
+    + '<path d="M29 37l17-7-7 16-3-5.5L29 37Z" stroke="#77e8ff" stroke-width="1.15" stroke-linejoin="round" fill="#77e8ff" fill-opacity=".14" opacity=".42"/>'
+    + '<circle cx="101" cy="48" r="2.1" fill="#77e8ff" opacity=".38"/>'
+    + '<circle cx="42" cy="96" r="1.6" fill="#ff85c8" opacity=".36"/>'
+    + '</svg>';
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+})();
+
+const CARD_CREST_LIGHT = (() => {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">'
+    + '<circle cx="66" cy="66" r="46" stroke="#d94695" stroke-width=".9" stroke-dasharray="3 5" opacity=".18"/>'
+    + '<circle cx="66" cy="66" r="34" stroke="#6366f1" stroke-width=".85" opacity=".14"/>'
+    + '<ellipse cx="66" cy="66" rx="50" ry="18" transform="rotate(-26 66 66)" stroke="#d94695" stroke-width="1" opacity=".2"/>'
+    + '<path d="M66 38l4.5 23.5L94 66l-23.5 4.5L66 94l-4.5-23.5L38 66l23.5-4.5L66 38Z" fill="#d94695" opacity=".12"/>'
+    + '<path d="M29 37l17-7-7 16-3-5.5L29 37Z" stroke="#0891b2" stroke-width="1.15" stroke-linejoin="round" fill="#0891b2" fill-opacity=".1" opacity=".3"/>'
+    + '</svg>';
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+})();
+
+const CARD_STAR_SVG = (() => {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">'
+    + '<defs><linearGradient id="s" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#77e8ff"/><stop offset=".52" stop-color="#ffffff"/><stop offset="1" stop-color="#ff69b7"/></linearGradient></defs>'
+    + '<path d="M12 2.2l2.1 7.7 7.7 2.1-7.7 2.1L12 21.8l-2.1-7.7L2.2 12l7.7-2.1L12 2.2Z" fill="url(#s)"/>'
+    + '<circle cx="18.6" cy="5.4" r="1.4" fill="#ffd98a"/>'
+    + '<circle cx="5.4" cy="18.6" r="1.1" fill="#77e8ff"/>'
+    + '</svg>';
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+})();
+
+// Subtle starlight corner motif for User (Rover) bubble
+const USER_CREST_DARK = (() => {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 88" fill="none">'
+    + '<circle cx="24" cy="64" r="28" stroke="#ffb3da" stroke-width=".9" stroke-dasharray="2.5 4.5" opacity=".24"/>'
+    + '<path d="M24 46l2.4 15.6L42 64l-15.6 2.4L24 82l-2.4-15.6L6 64l15.6-2.4L24 46Z" fill="#ffffff" opacity=".16"/>'
+    + '<circle cx="48" cy="46" r="1.6" fill="#77e8ff" opacity=".35"/>'
+    + '</svg>';
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+})();
+
+// Crisp Polestar check-seal icon for settled TurnProcess ("乐章完成")
+const TURN_CHECK_SVG = (() => {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">'
+    + '<circle cx="12" cy="12" r="9.2" stroke="#000" stroke-width="1.8" stroke-dasharray="42 10" stroke-linecap="round"/>'
+    + '<path d="M8.1 12.2l2.7 2.7 5.4-5.6" stroke="#000" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>'
+    + '</svg>';
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+})();
+
 
 // Pixel-rounded frame (stepped corners) painted by a pseudo element through a
 // 7x7 nine-slice mask: ring at full alpha, interior at `fill` alpha. Colour
@@ -44,6 +143,10 @@ ${PI} ${sel}::before{content:"";position:absolute;left:50%;top:50%;width:${size}
   const pixSvg = (sel, icon) => `
 ${PI} ${sel}{background:currentColor !important;-webkit-mask:${svgUrl(icon)} center/contain no-repeat;mask:${svgUrl(icon)} center/contain no-repeat;opacity:1 !important}
 ${PI} ${sel} > *{visibility:hidden}`;
+  // Paint a crisp high-DPI Wuthering Waves x Aemeath vector icon onto an <svg>.
+  const vecSvg = (sel, icon) => `
+${PI} ${sel}{background:currentColor !important;-webkit-mask:${vecSvgUrl(icon)} center/contain no-repeat;mask:${vecSvgUrl(icon)} center/contain no-repeat;opacity:1 !important;image-rendering:auto !important}
+${PI} ${sel} > *{visibility:hidden}`;
   return `
 /* ================= fonts ================= */
 html[data-aemeath][data-ae-font="pixel-title"] [data-phase] header [class*="_crumbs"],
@@ -59,19 +162,21 @@ html[data-aemeath][data-ae-font="mono"] body{font-family:ui-monospace,"JetBrains
 
 /* ================= brand ================= */
 ${K} .ae-dsu-mark{image-rendering:auto;filter:drop-shadow(0 0 4px rgba(var(--ae-pink-rgb),.55))}
-${K} .ae-dsu-hero{display:inline-grid;place-items:center;animation:ae-orbit 9s linear infinite}
-@keyframes ae-orbit{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+${K} .ae-dsu-hero{display:inline-grid;place-items:center;animation:ae-hero-float 4.8s ease-in-out infinite}
+@keyframes ae-hero-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 ${K} button[class*="_brand"]{filter:none !important}
 .ae-brand-name{display:inline-flex;flex-direction:column;justify-content:center;line-height:1;gap:2px;white-space:nowrap;min-width:0}
 .ae-brand-name b{font-size:20px;line-height:20px;font-weight:400;color:var(--ae-pink-soft,#ffb3da);text-shadow:0 0 8px rgba(var(--ae-pink-rgb,255,105,183),.45),1px 1px 0 rgba(var(--ae-plum-rgb,13,9,27),.9)}
 .ae-brand-name small{font:600 8px/1 ui-monospace,monospace;letter-spacing:1.6px;color:var(--ae-cyan,#77e8ff);opacity:.85}
 
 /* floating "open directory" button: only meaningful on the chat page */
-html[data-aemeath] [data-mobile-nav="frame"][data-dshm-page="sidebar"] [data-mobile-nav="fab"]{opacity:0 !important;pointer-events:none !important}
-${pix('[data-mobile-nav="fab"]', 'layout')}
+html[data-aemeath]:has([data-mobile-nav="frame"][data-dshm-page="sidebar"]) [data-mobile-nav="fab"]{opacity:0 !important;pointer-events:none !important}
+/* a draft session's header already carries the same "open directory" key; drop the duplicate */
+html[data-aemeath]:has([data-mobile-nav="frame"] [data-phase] header [data-mobile-nav="toggle"]) [data-mobile-nav="fab"]{display:none !important}
+${pix('[data-mobile-nav="fab"]', 'sidebarLeft')}
 
 /* ================= session header: pixel icons ================= */
-${pix('[data-phase] header [data-mobile-nav="toggle"]', 'layout')}
+${pix('[data-phase] header [data-mobile-nav="toggle"]', 'sidebarLeft')}
 ${pix('[data-phase] header [data-mobile-nav="files"]', 'folder')}
 ${pix('[data-phase] header button[class*="_moreButton"]', 'more')}
 ${pix('[data-phase] header button[data-sidebar-right-expand]', 'sidebarRight')}
@@ -93,29 +198,232 @@ ${K} [data-phase] header button[class*="_moreButton"]:active,${K} [data-phase] h
 ${K} [data-phase] header [data-conversation-tabs] button{position:relative}
 ${K} [data-phase] header [data-conversation-tabs] button[class*="Active"]::before{content:"";position:absolute;left:50%;bottom:3px;width:6px;height:3px;margin-left:-3px;background:var(--ae-cyan);box-shadow:-3px 3px 0 var(--ae-cyan),3px 3px 0 var(--ae-cyan)}
 
-/* ================= AI reply: "transmission" card ================= */
-${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"]{
-  padding:26px 14px 12px 16px !important;border-radius:0 !important;
+/* ================= AI reply: "transmission" card (Holographic Starlight Terminal) ================= */
+${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"]:not(#ae-x){
+  position:relative !important;
+  padding:40px 15px 16px 18px !important;
+  border-radius:0 !important;
   background:
-    linear-gradient(90deg,rgba(var(--ae-cyan-rgb),.18),rgba(var(--ae-violet-rgb),.10) 55%,transparent) top left/100% 20px no-repeat,
-    repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px),
-    rgba(var(--ae-surface-rgb),.72) !important;
+    /* top-right 14px chamfer neon edge */
+    linear-gradient(225deg,transparent 8.8px,rgba(var(--ae-cyan-rgb),.88) 9.1px,rgba(var(--ae-pink-rgb),.78) 10.6px,transparent 11px) top right/16px 16px no-repeat,
+    /* bottom-left 12px chamfer neon edge */
+    linear-gradient(45deg,transparent 7.4px,rgba(var(--ae-pink-rgb),.82) 7.7px,rgba(var(--ae-violet-rgb),.7) 9.1px,transparent 9.5px) bottom left/14px 14px no-repeat,
+    /* top-left corner precision highlight */
+    linear-gradient(90deg,var(--ae-cyan),transparent) 3px 0/44px 1.5px no-repeat,
+    /* bottom-right Aemeath Polestar & Paper-Plane holographic watermark */
+    ${CARD_CREST_DARK} right 6px bottom 6px/114px 114px no-repeat,
+    /* header luminous hairline divider at y=30px */
+    linear-gradient(90deg,rgba(var(--ae-cyan-rgb),.82) 0%,rgba(var(--ae-pink-rgb),.58) 46%,rgba(var(--ae-violet-rgb),.22) 82%,transparent 100%) 0 30px/100% 1px no-repeat,
+    /* header iridescent frosted strip (0..30px) */
+    linear-gradient(90deg,rgba(var(--ae-cyan-rgb),.22) 0%,rgba(var(--ae-pink-rgb),.14) 48%,rgba(var(--ae-violet-rgb),.09) 80%,rgba(var(--ae-cyan-rgb),.03) 100%) 0 0/100% 30px no-repeat,
+    /* left cyan -> violet -> pink energy rail */
+    linear-gradient(180deg,var(--ae-cyan) 0%,rgba(var(--ae-violet-rgb),.95) 52%,var(--ae-pink) 100%) 0 0/3px 100% no-repeat,
+    /* bottom luminous rose-cyan rim highlight */
+    linear-gradient(90deg,transparent 10%,rgba(var(--ae-pink-rgb),.52) 48%,rgba(var(--ae-cyan-rgb),.44) 86%,transparent 100%) 0 100%/100% 1px no-repeat,
+    /* ambient corner starlight blooms */
+    radial-gradient(240px 130px at 0% 0%,rgba(var(--ae-cyan-rgb),.15),transparent 72%),
+    radial-gradient(260px 150px at 100% 100%,rgba(var(--ae-pink-rgb),.15),transparent 72%),
+    /* ultra-fine holographic scanlines */
+    repeating-linear-gradient(0deg,rgba(255,255,255,.016) 0 1px,transparent 1px 4px),
+    /* translucent cosmic glass body */
+    linear-gradient(165deg,rgba(var(--ae-plum2-rgb),.82) 0%,rgba(var(--ae-surface-rgb),.76) 54%,rgba(var(--ae-plum-rgb),.86) 100%) !important;
+  -webkit-backdrop-filter:blur(12px) saturate(1.24);
+  backdrop-filter:blur(12px) saturate(1.24);
+  border:1px solid rgba(var(--ae-cyan-rgb),.32) !important;
+  border-right-color:rgba(var(--ae-pink-rgb),.24) !important;
+  border-bottom-color:rgba(var(--ae-pink-rgb),.28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    inset 5px 0 16px -8px rgba(var(--ae-cyan-rgb),.55),
+    inset -1px -1px 0 rgba(var(--ae-pink-rgb),.18),
+    0 10px 26px -12px rgba(var(--ae-plum-rgb),.88),
+    0 0 22px -6px rgba(var(--ae-cyan-rgb),.18) !important;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,12px 100%,0 calc(100% - 12px))}
+${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"]:not(#ae-x)::before{
+  content:"AEMEATH // 通讯" !important;
+  position:absolute;left:12px;top:6px;right:auto;width:auto !important;height:18px !important;clip-path:none !important;opacity:1 !important;
+  padding-left:23px;
+  background:${CARD_STAR_SVG} 0 50%/16px 16px no-repeat !important;
+  image-rendering:auto !important;
+  animation:ae-card-star-glow 2.8s ease-in-out infinite;
+  font:400 20px/18px var(--ae-font-px);
+  transform:scale(.62);transform-origin:left center;
+  letter-spacing:1.3px;
+  color:#dcf8ff;
+  text-shadow:0 0 8px rgba(var(--ae-cyan-rgb),.75),0 0 14px rgba(var(--ae-pink-rgb),.38);
+  white-space:nowrap;pointer-events:none}
+@keyframes ae-card-star-glow{0%,100%{filter:drop-shadow(0 0 3px rgba(var(--ae-cyan-rgb),.55))}50%{filter:drop-shadow(0 0 6px rgba(var(--ae-pink-rgb),.85))}}
+/* Top-right animated 5-bar Aemeath resonance frequency meter */
+${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"]:not(#ae-x)::after{
+  content:"";position:absolute;right:18px;top:9px;width:30px;height:12px;pointer-events:none;
+  background:
+    linear-gradient(180deg,#ff9ed3,var(--ae-pink)) 0 100%/3px 5px no-repeat,
+    linear-gradient(180deg,#f0a4ff,var(--ae-violet)) 6px 100%/3px 10px no-repeat,
+    linear-gradient(180deg,#c4f4ff,var(--ae-cyan)) 12px 100%/3px 7px no-repeat,
+    linear-gradient(180deg,#ffb8e0,var(--ae-pink)) 18px 100%/3px 11px no-repeat,
+    linear-gradient(180deg,#9ef3ff,var(--ae-cyan)) 24px 100%/3px 6px no-repeat;
+  filter:drop-shadow(0 0 4px rgba(var(--ae-pink-rgb),.55));
+  animation:ae-card-eq 2.2s ease-in-out infinite}
+@keyframes ae-card-eq{
+  0%,100%{background-size:3px 5px,3px 10px,3px 7px,3px 11px,3px 6px;opacity:.92}
+  25%{background-size:3px 9px,3px 6px,3px 11px,3px 7px,3px 10px;opacity:1}
+  50%{background-size:3px 11px,3px 12px,3px 5px,3px 9px,3px 5px;opacity:.85}
+  75%{background-size:3px 6px,3px 8px,3px 10px,3px 5px,3px 11px;opacity:.98}}
+@media (prefers-reduced-motion:reduce){
+  ${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"]:not(#ae-x)::before,
+  ${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"]:not(#ae-x)::after{animation:none !important}}
+/* Richer jewel-glass inner markdown accents inside transmission cards */
+${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"] [class*="_markdown"] :not(pre) > code{
+  background:linear-gradient(135deg,rgba(var(--ae-pink-rgb),.18),rgba(var(--ae-violet-rgb),.16)) !important;
+  border:1px solid rgba(var(--ae-pink-rgb),.30) !important;
+  border-radius:5px !important;
+  padding:.08em .42em !important;
+  color:#ffd6ee !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10)}
+${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"] [class*="_markdown"] strong{
+  color:#fff5fb;text-shadow:0 0 10px rgba(var(--ae-pink-rgb),.22)}
+${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"] [class*="_markdown"] pre{
+  border-radius:8px !important;
   border:1px solid rgba(var(--ae-cyan-rgb),.28) !important;
-  box-shadow:inset 3px 0 0 var(--ae-cyan),3px 3px 0 rgba(var(--ae-plum-rgb),.65),0 0 18px rgba(var(--ae-cyan-rgb),.08) !important;
-  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
-${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"]::before{
-  content:"AEMEATH // 通讯" !important;position:absolute;left:12px;top:4px;right:auto;width:auto !important;height:auto !important;clip-path:none !important;opacity:1 !important;
-  padding-left:26px;background:url("${asset('polestar-tag.png')}") 0 50%/20px 20px no-repeat !important;image-rendering:pixelated;
-  font:400 10px/12px var(--ae-font-px);font-size:20px;line-height:14px;transform:scale(.6);transform-origin:left top;letter-spacing:1px;color:var(--ae-cyan);text-shadow:0 0 6px rgba(var(--ae-cyan-rgb),.6);white-space:nowrap;pointer-events:none}
-${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"]::after{
-  content:"";position:absolute;right:8px;top:6px;width:24px;height:6px;pointer-events:none;
-  background:linear-gradient(90deg,var(--ae-pink) 0 6px,transparent 6px 9px,var(--ae-violet) 9px 15px,transparent 15px 18px,var(--ae-cyan) 18px 24px);animation:ae-blink 2.4s steps(2) infinite}
-@keyframes ae-blink{50%{opacity:.35}}
-html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"]{background:linear-gradient(90deg,rgba(var(--ae-pink-rgb),.16),transparent) top left/100% 20px no-repeat,rgba(255,255,255,.8) !important}
+  background:linear-gradient(90deg,rgba(var(--ae-cyan-rgb),.22),rgba(var(--ae-pink-rgb),.14),transparent) 0 0/100% 2px no-repeat,rgba(9,7,22,.82) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 18px -8px rgba(0,0,0,.6) !important}
+${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"] [class*="_markdown"] blockquote{
+  border-left:2.5px solid var(--ae-pink) !important;
+  border-radius:0 8px 8px 0;
+  background:linear-gradient(90deg,rgba(var(--ae-pink-rgb),.12),rgba(var(--ae-cyan-rgb),.04)) !important;
+  padding:6px 12px !important}
+${K} [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"] [class*="_markdown"] hr{
+  height:1px !important;opacity:.75 !important;
+  background:linear-gradient(90deg,transparent,rgba(var(--ae-pink-rgb),.65) 30%,rgba(var(--ae-cyan-rgb),.65) 70%,transparent) !important}
+/* Light mode: Sakura Crystal Transmission Card */
+html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"]:not(#ae-x){
+  background:
+    linear-gradient(225deg,transparent 8.8px,rgba(var(--ae-pink-rgb),.7) 9.1px,rgba(var(--ae-cyan-rgb),.6) 10.6px,transparent 11px) top right/16px 16px no-repeat,
+    linear-gradient(45deg,transparent 7.4px,rgba(var(--ae-pink-rgb),.65) 7.7px,transparent 9.4px) bottom left/14px 14px no-repeat,
+    ${CARD_CREST_LIGHT} right 6px bottom 6px/114px 114px no-repeat,
+    linear-gradient(90deg,rgba(var(--ae-pink-rgb),.55),rgba(var(--ae-cyan-rgb),.38) 55%,transparent) 0 30px/100% 1px no-repeat,
+    linear-gradient(90deg,rgba(var(--ae-pink-rgb),.16),rgba(var(--ae-cyan-rgb),.09) 55%,transparent) 0 0/100% 30px no-repeat,
+    linear-gradient(180deg,var(--ae-pink) 0%,var(--ae-violet) 55%,var(--ae-cyan) 100%) 0 0/3px 100% no-repeat,
+    linear-gradient(165deg,rgba(255,250,253,.90),rgba(250,245,255,.86)) !important;
+  border-color:rgba(var(--ae-pink-rgb),.34) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 8px 22px -12px rgba(96,32,82,.22) !important}
+html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"]:not(#ae-x)::before{
+  color:#b02472 !important;text-shadow:0 0 6px rgba(var(--ae-pink-rgb),.28)}
+html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [data-chat-flow-kind="assistant-step"][data-chat-group-part="response"] [class*="_markdown"] :not(pre) > code{
+  background:rgba(var(--ae-pink-rgb),.11) !important;border-color:rgba(var(--ae-pink-rgb),.28) !important;color:#9d1e65 !important}
 
-/* ================= user bubble: pixel tail ================= */
-${K} [class*="_userRow"] [class*="_bubble"]{border-radius:0 !important;
-  clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+/* ================= user bubble: Aemeath x Rover Starlight Glass ================= */
+${K} [class*="_userRow"] [class*="_bubble"]:not(#ae-x){
+  position:relative !important;
+  padding:12px 17px 12px 15px !important;
+  border-radius:18px 6px 18px 18px !important;
+  clip-path:none !important;
+  background:
+    /* right pink -> violet luminous energy rail (mirrors AI card left rail) */
+    linear-gradient(180deg,var(--ae-pink) 0%,var(--ae-violet) 100%) right 0 top 0/3px 100% no-repeat,
+    /* bottom-left subtle starlight ring watermark */
+    ${USER_CREST_DARK} left 2px bottom 2px/82px 82px no-repeat,
+    /* top-right rose starlight bloom */
+    radial-gradient(190px 100px at 100% 0%,rgba(var(--ae-pink-rgb),.26),transparent 72%),
+    /* translucent sakura-violet cosmic glass */
+    linear-gradient(135deg,rgba(var(--ae-pink-rgb),.32) 0%,rgba(var(--ae-violet-rgb),.26) 52%,rgba(var(--ae-plum2-rgb),.80) 100%) !important;
+  -webkit-backdrop-filter:blur(12px) saturate(1.28);
+  backdrop-filter:blur(12px) saturate(1.28);
+  border:1px solid rgba(var(--ae-pink-rgb),.46) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset -4px 0 14px -6px rgba(var(--ae-pink-rgb),.65),
+    0 10px 24px -12px rgba(var(--ae-pink-rgb),.46),
+    0 4px 12px -4px rgba(0,0,0,.45) !important;
+  color:#fff7fc !important;
+  overflow:hidden}
+${K} [class*="_userRow"] [class*="_bubble"]:not(#ae-x)::after{
+  content:"";position:absolute;right:8px;top:6px;width:11px;height:11px;pointer-events:none;opacity:.82;
+  background:${CARD_STAR_SVG} center/contain no-repeat;
+  filter:drop-shadow(0 0 4px rgba(var(--ae-pink-rgb),.75))}
+html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [class*="_userRow"] [class*="_bubble"]:not(#ae-x){
+  background:
+    linear-gradient(180deg,var(--ae-pink) 0%,var(--ae-violet) 100%) right 0 top 0/3px 100% no-repeat,
+    linear-gradient(135deg,rgba(255,222,240,.92),rgba(238,228,255,.88)) !important;
+  border-color:rgba(var(--ae-pink-rgb),.42) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 6px 18px -10px rgba(200,50,130,.28) !important;
+  color:#381632 !important}
+/* user attached image thumbnails */
+${K} [class*="_userRow"] [class*="_attachmentRow"] :is(button,a,img){
+  border-radius:12px !important}
+${K} [class*="_userRow"] [class*="_attachmentRow"] > *{
+  border:1px solid rgba(var(--ae-pink-rgb),.36) !important;
+  border-radius:12px !important;
+  box-shadow:0 6px 16px -6px rgba(0,0,0,.55),0 0 10px -4px rgba(var(--ae-pink-rgb),.35) !important;
+  overflow:hidden}
+
+/* ================= chat page polish: message actions, scroll-to-bottom orb, composer attachments & process rail ================= */
+/* message action bar (copy / feedback / share / timestamp) */
+${K} [class*="_actions"][data-clock] button[class*="_action"],
+${K} [data-turn-tail] button,
+${K} [data-chat-flow-kind="user"] [data-clock] button{
+  border-radius:9px !important;
+  color:rgba(232,216,255,.72) !important;
+  transition:background .15s ease,color .15s ease,transform .12s ease !important}
+${K} [class*="_actions"][data-clock] button[class*="_action"]:hover,
+${K} [data-turn-tail] button:hover,
+${K} [data-chat-flow-kind="user"] [data-clock] button:hover{
+  background:rgba(var(--ae-pink-rgb),.18) !important;
+  color:#ffe6f4 !important}
+${K} [class*="_actions"][data-clock] button[class*="_action"]:active,
+${K} [data-turn-tail] button:active{transform:scale(.92)}
+${K} [class*="_actions"][data-clock] :is([class*="_timeStart"],[class*="_timeEnd"]){
+  font-family:ui-monospace,"SFMono-Regular",Menlo,monospace !important;
+  font-size:11.5px !important;letter-spacing:.3px;
+  color:rgba(218,206,246,.62) !important}
+html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [class*="_actions"][data-clock] button[class*="_action"],
+html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [data-turn-tail] button{color:rgba(98,42,84,.7) !important}
+html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [class*="_actions"][data-clock] :is([class*="_timeStart"],[class*="_timeEnd"]){color:rgba(110,56,96,.62) !important}
+
+/* floating scroll-to-bottom orb (回到底部) */
+${K} button[class*="_toBottom"]:not(#ae-x){
+  width:36px !important;height:36px !important;min-width:36px !important;min-height:36px !important;
+  border-radius:50% !important;border:0 !important;
+  color:#ffe4f4 !important;
+  background:
+    radial-gradient(circle at 30% 25%,rgba(var(--ae-pink-rgb),.34),transparent 62%),
+    linear-gradient(160deg,rgba(var(--ae-plum2-rgb),.92),rgba(var(--ae-plum-rgb),.96)) !important;
+  -webkit-backdrop-filter:blur(12px) saturate(1.3);backdrop-filter:blur(12px) saturate(1.3);
+  box-shadow:inset 0 0 0 1px rgba(var(--ae-pink-rgb),.48),inset 0 1px 0 rgba(255,255,255,.22),0 6px 18px -4px rgba(0,0,0,.72),0 0 16px -4px rgba(var(--ae-pink-rgb),.55) !important;
+  transition:transform .14s ease,box-shadow .16s ease,background .16s ease !important}
+${K} button[class*="_toBottom"]:not(#ae-x):active{transform:scale(.92)}
+html[style*="color-scheme: light"][data-aemeath][data-ae-skin] button[class*="_toBottom"]:not(#ae-x){
+  color:#8f1e5d !important;
+  background:linear-gradient(160deg,rgba(255,250,253,.96),rgba(255,232,244,.92)) !important;
+  box-shadow:inset 0 0 0 1px rgba(var(--ae-pink-rgb),.38),0 6px 16px -6px rgba(160,40,105,.25) !important}
+
+/* fix stretched oval X remove button on composer image thumbnails */
+${K} [data-composer-card] [class*="_imageItem"] [class*="_thumbnail"]:not(#ae-x){
+  border-radius:12px !important;
+  border:1px solid rgba(var(--ae-pink-rgb),.42) !important;
+  box-shadow:0 4px 12px -4px rgba(0,0,0,.55) !important}
+${K} [data-composer-card] [class*="_imageItem"] button[class*="_remove"]:not(#ae-x){
+  top:4px !important;right:4px !important;
+  width:20px !important;height:20px !important;min-width:20px !important;min-height:20px !important;
+  padding:0 !important;margin:0 !important;border-radius:50% !important;
+  display:grid !important;place-items:center !important;
+  background:rgba(var(--ae-plum-rgb),.88) !important;
+  color:#ffe4f4 !important;
+  border:1px solid rgba(var(--ae-pink-rgb),.58) !important;
+  box-shadow:0 2px 8px rgba(0,0,0,.55),0 0 6px rgba(var(--ae-pink-rgb),.35) !important}
+${K} [data-composer-card] [class*="_imageItem"] button[class*="_remove"]:not(#ae-x) svg{
+  width:11px !important;height:11px !important}
+
+/* subtle vertical starlight thread inside expanded step-process rows */
+${K} [data-step-process] > button{
+  border-radius:10px !important;
+  padding:3px 8px 3px 4px !important;
+  transition:background .15s ease !important}
+${K} [data-step-process] > button:hover{background:rgba(var(--ae-pink-rgb),.09) !important}
+${K} [data-step-process-content]{
+  position:relative;
+  border-left:1px solid rgba(var(--ae-cyan-rgb),.18);
+  margin-left:9px;padding-left:10px}
 
 /* ================= ask-user question card ================= */
 ${K} [class*="Mbwy4a_card"],${K} [class*="LVzXQa_card"]{
@@ -149,7 +457,7 @@ ${K} [class*="mna1RW_command"]{border-radius:0 !important;border:1px solid rgba(
 ${K} [class*="_sidebarCol"] [class*="hHd-Xa_root"],${K} [class*="hHd-Xa_root"]{background:linear-gradient(180deg,rgba(var(--ae-plum2-rgb,26,25,52),.55),rgba(var(--ae-plum-rgb),.25)) !important}
 ${K} [class*="hHd-Xa_logoRow"]{border-bottom:1px dashed rgba(var(--ae-pink-rgb),.3);padding-bottom:6px;margin-bottom:4px}
 ${K} [class*="hHd-Xa_panelRow"]{border-radius:0 !important}
-${K} [class*="hHd-Xa_panelRow"][class*="hHd-Xa_panelActive"],${K} [class*="hHd-Xa_panelActive"]{background:rgba(var(--ae-pink-rgb),.2) !important;box-shadow:inset 3px 0 0 var(--ae-pink) !important}
+${K} [class*="hHd-Xa_panelRow"][class*="hHd-Xa_panelActive"],${K} [class*="hHd-Xa_panelActive"],${K} [class*="hHd-Xa_panelEntryActive"] [class*="hHd-Xa_panelRow"]{background:rgba(var(--ae-pink-rgb),.2) !important;box-shadow:inset 3px 0 0 var(--ae-pink) !important}
 ${K} [class*="hHd-Xa_iconButton"],${K} [class*="IW6AQa_iconButton"]{border-radius:0 !important}
 ${K} [class*="_sessionRow"]{clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px)}
 ${K} button[class*="_searchButton"]{border-radius:0 !important;border:1px solid rgba(var(--ae-cyan-rgb),.3) !important}
@@ -219,15 +527,57 @@ ${K} [data-phase] header button[class*="QsffPG_trigger"][aria-label*="运行中"
 ${K} [class*="QsffPG_panel"],${K} [class*="QsffPG_menu"]{border-radius:0 !important;border:2px solid rgba(var(--ae-cyan-rgb),.45) !important;background:rgba(var(--ae-plum2-rgb,26,25,52),.97) !important;box-shadow:4px 4px 0 rgba(0,0,0,.4) !important}
 ${K} [class*="QsffPG_rowDot"]{border-radius:0 !important}
 
-/* ================= turn-process row ("爱弥斯调谐中 · 3秒") ================= */
-${K} [data-turn-process]{position:relative;overflow:hidden;height:auto !important;min-height:38px;padding:6px 12px 6px 30px !important;border:2px solid rgba(var(--ae-violet-rgb),.5) !important;border-radius:0 !important;
-  background:linear-gradient(90deg,rgba(var(--ae-violet-rgb),.20),rgba(var(--ae-pink-rgb),.08) 60%,transparent),rgba(var(--ae-plum-rgb),.55) !important;
-  box-shadow:3px 3px 0 rgba(var(--ae-plum-rgb),.75) !important;color:var(--ae-pink-soft) !important;
-  clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
-${K} [data-turn-process]::before{content:"";position:absolute;left:10px;top:50%;width:12px;height:12px;margin-top:-6px;background:var(--ae-pink);-webkit-mask:${svgUrl('heart')} center/contain no-repeat;mask:${svgUrl('heart')} center/contain no-repeat;filter:drop-shadow(0 0 3px rgba(var(--ae-pink-rgb),.8))}
-${K} [data-turn-process]:disabled::before{width:16px;height:16px;margin-top:-8px;left:8px;-webkit-mask:none;mask:none;filter:none;background:url("${asset('heart-pulse.png')}") 0 0/96px 16px no-repeat;image-rendering:pixelated;animation:ae-heart .6s steps(6) infinite}
-@keyframes ae-heart{to{background-position:-96px 0}}
-/* "爱弥斯调谐中" running line: pixel tuning bars instead of the whale tail, pink→cyan text sweep */
+/* ================= turn-process row ("乐章完成 · 用时 ...") ================= */
+${K} [data-turn-process]:not(#ae-x){
+  position:relative !important;overflow:hidden !important;
+  height:auto !important;min-height:36px !important;
+  padding:6px 12px 6px 36px !important;margin:4px 0 6px !important;
+  border:1px solid rgba(var(--ae-cyan-rgb),.32) !important;
+  border-right-color:rgba(var(--ae-pink-rgb),.26) !important;
+  border-radius:12px !important;clip-path:none !important;
+  background:
+    linear-gradient(90deg,var(--ae-cyan),var(--ae-violet) 55%,var(--ae-pink)) 0 100%/100% 1.5px no-repeat,
+    linear-gradient(95deg,rgba(var(--ae-cyan-rgb),.15) 0%,rgba(var(--ae-violet-rgb),.14) 52%,rgba(var(--ae-pink-rgb),.11) 100%),
+    rgba(var(--ae-plum2-rgb),.72) !important;
+  -webkit-backdrop-filter:blur(10px) saturate(1.22);backdrop-filter:blur(10px) saturate(1.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 18px -10px rgba(0,0,0,.65),0 0 14px -6px rgba(var(--ae-cyan-rgb),.26) !important;
+  color:#f5e6ff !important;
+  transition:border-color .16s ease,box-shadow .16s ease,background .16s ease !important}
+${K} [data-turn-process]:not(#ae-x):hover:not(:disabled){
+  border-color:rgba(var(--ae-pink-rgb),.46) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 6px 18px -10px rgba(0,0,0,.7),0 0 16px -5px rgba(var(--ae-pink-rgb),.38) !important}
+${K} [data-turn-process]:not(#ae-x)::before{
+  content:"" !important;position:absolute;left:11px;top:50%;width:16px;height:16px;margin-top:-8px;
+  background:linear-gradient(135deg,#9ff6ff,var(--ae-cyan) 55%,var(--ae-pink)) !important;
+  -webkit-mask:${TURN_CHECK_SVG} center/contain no-repeat !important;
+  mask:${TURN_CHECK_SVG} center/contain no-repeat !important;
+  filter:drop-shadow(0 0 4px rgba(var(--ae-cyan-rgb),.72));animation:none !important}
+${K} [data-turn-process]:not(#ae-x)::after{content:none !important;display:none !important}
+${K} [data-turn-process] [class*="_label"]:not(#ae-x){
+  font-family:inherit !important;font-size:13px !important;line-height:20px !important;
+  font-weight:600 !important;letter-spacing:.35px !important;
+  color:#f5e4ff !important;
+  display:inline-flex !important;align-items:baseline !important;gap:1px !important;
+  flex:1 1 auto !important;min-width:0 !important;overflow:hidden !important;text-overflow:ellipsis !important}
+${K} [data-turn-process] [class*="_durationNumber"]{
+  font-family:ui-monospace,"SFMono-Regular",Menlo,monospace !important;
+  font-size:13px !important;font-weight:700 !important;
+  color:#90f3ff !important;text-shadow:0 0 8px rgba(var(--ae-cyan-rgb),.48);
+  margin:0 2px}
+${K} [data-turn-process] svg[class*="_chevron"]{
+  margin-left:auto !important;width:15px !important;height:15px !important;
+  color:rgba(255,204,234,.82) !important}
+html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [data-turn-process]:not(#ae-x){
+  background:
+    linear-gradient(90deg,var(--ae-pink),var(--ae-violet) 55%,var(--ae-cyan)) 0 100%/100% 1.5px no-repeat,
+    linear-gradient(95deg,rgba(var(--ae-pink-rgb),.12),rgba(var(--ae-cyan-rgb),.09)),
+    rgba(255,250,253,.88) !important;
+  border-color:rgba(var(--ae-pink-rgb),.3) !important;
+  color:#481c3e !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 4px 12px -8px rgba(140,40,95,.2) !important}
+html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [data-turn-process] [class*="_label"]:not(#ae-x){color:#481c3e !important}
+html[style*="color-scheme: light"][data-aemeath][data-ae-skin] [data-turn-process] [class*="_durationNumber"]{color:#b02472 !important;text-shadow:none}
+/* "爱弥斯调谐中" running line: sleek starlight equalizer bars + pink→cyan sweep */
 ${K} [data-chat-running]{--dsw-alias-label-deep-diving:rgb(var(--ae-pink-rgb));--dsw-alias-label-deep-diving-shimmer:rgb(var(--ae-cyan-rgb));--dsw-alias-label-shimmer:rgb(var(--ae-cyan-rgb));color:rgb(var(--ae-pink-rgb)) !important;font-weight:600;letter-spacing:.02em}
 ${K} [data-chat-running] [class*="_runningContent"]{gap:8px !important}
 ${K} [data-chat-running] [class*="_runningIcon"]{width:19px !important;height:14px !important;contain:none !important;overflow:visible !important;image-rendering:pixelated;
@@ -244,16 +594,12 @@ ${K} [data-chat-running] [class*="_runningIcon"] > *{display:none !important}
 ${K} [data-chat-running] [class*="_runningDivider"]{height:1px !important;position:relative;overflow:visible;
   background:linear-gradient(90deg,transparent,rgba(var(--ae-pink-rgb),.55) 18%,rgba(var(--ae-violet-rgb),.45) 50%,rgba(var(--ae-cyan-rgb),.55) 82%,transparent) !important}
 ${K} [data-chat-running] [class*="_runningDivider"]::after{content:"";position:absolute;top:-7px;left:0;width:15px;height:15px;
-  background:url("${asset('polestar-tag-strip.png')}") 0 0/30px 15px no-repeat;image-rendering:pixelated;filter:drop-shadow(0 0 4px rgba(var(--ae-cyan-rgb),.8));
-  animation:ae-run-star 3.2s linear infinite,ae-qms 1.6s steps(1) infinite}
+  background:${CARD_STAR_SVG} center/contain no-repeat;filter:drop-shadow(0 0 4px rgba(var(--ae-cyan-rgb),.8));
+  animation:ae-run-star 3.2s linear infinite}
 @keyframes ae-run-star{from{left:0;opacity:0}8%{opacity:1}92%{opacity:1}to{left:calc(100% - 15px);opacity:0}}
 @media (prefers-reduced-motion:reduce){${K} [data-chat-running] [class*="_runningIcon"],${K} [data-chat-running] [class*="_runningDivider"]::after{animation:none !important}}
-${K} [data-turn-process]:disabled::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:30%;background:repeating-linear-gradient(90deg,var(--ae-cyan) 0 4px,transparent 4px 6px);animation:ae-scan 1.8s linear infinite}
 @keyframes ae-beat{50%{transform:scale(.7)}}
 @keyframes ae-scan{from{transform:translateX(-100%)}to{transform:translateX(340%)}}
-${K} [data-turn-process] [class*="_label"]{font-family:var(--ae-font-px) !important;font-size:20px !important;line-height:22px !important;letter-spacing:.5px;color:inherit !important}
-${K} [data-turn-process]:not(:disabled){color:var(--dsw-alias-label-secondary) !important;border-color:rgba(var(--ae-pink-rgb),.3) !important}
-${K} [data-turn-process]:not(:disabled)::before{background:var(--ae-cyan);-webkit-mask-image:${svgUrl('check')};mask-image:${svgUrl('check')};filter:none}
 
 /* ================= composer toggle ("收起输入框") ================= */
 ${K} [data-mobile-nav="composer-toggle"]{position:relative;padding:0 14px 0 30px !important;font-family:var(--ae-font-px) !important;font-size:20px !important;line-height:20px !important;font-weight:400 !important;letter-spacing:1px;
@@ -263,53 +609,95 @@ html[data-aemeath] [data-dshm-composer="collapsed"] [data-mobile-nav="composer-t
 @keyframes ae-bob{50%{transform:translateY(2px)}}
 
 
-/* ================= step rows: pixel icons for 救世中 (think) and tool rows ================= */
-${pixSvg('[data-disclosure-row] [class*="_iconIdle"] svg', 'wave')}
-${K} [data-disclosure-row] [class*="_iconIdle"] svg{color:var(--ae-pink) !important;filter:drop-shadow(0 0 3px rgba(var(--ae-pink-rgb),.7));animation:ae-twinkle 2.4s steps(2) infinite}
+/* ================= step rows: high-DPI Wuthering Waves x Aemeath vector icons ================= */
+${vecSvg('[data-disclosure-row] [class*="_iconIdle"] svg', 'wave')}
+${K} [data-disclosure-row] [class*="_iconIdle"] svg{
+  width:15px !important;height:15px !important;
+  color:var(--ae-pink) !important;
+  filter:drop-shadow(0 0 4px rgba(var(--ae-pink-rgb),.65));
+  animation:ae-breathe 2.6s ease-in-out infinite}
+@keyframes ae-breathe{0%,100%{opacity:1}50%{opacity:.62}}
 @keyframes ae-twinkle{50%{opacity:.55}}
 ${K} [data-disclosure-row] [class*="lcKema_title"]{color:var(--ae-pink-soft) !important;font-weight:600}
-${pixSvg('[data-sample="bash"] [class*="_iconIdle"] svg', 'zap')}
-${pixSvg('[data-tool] [class*="_iconIdle"] svg', 'echo')}
-${pixSvg(':is([data-tool*="read" i],[data-tool="view"]) [class*="_iconIdle"] svg', 'book')}
-${pixSvg(':is([data-tool*="write" i],[data-tool*="edit" i]) [class*="_iconIdle"] svg', 'edit')}
-${pixSvg(':is([data-tool*="grep" i],[data-tool*="glob" i],[data-tool*="search" i]) [class*="_iconIdle"] svg', 'search')}
-${pixSvg(':is([data-tool*="web" i],[data-tool*="fetch" i],[data-tool*="page" i]) [class*="_iconIdle"] svg', 'cloud')}
-${pixSvg(':is([data-tool*="agent" i],[data-tool*="teammate" i],[data-tool*="delegate" i]) [class*="_iconIdle"] svg', 'echo')}
-${pixSvg(':is([data-tool="read_image"],[data-tool="view_image"]) [class*="_iconIdle"] svg', 'image')}
-${pixSvg(':is([data-tool="todo_write"],[data-tool="skill"]) [class*="_iconIdle"] svg', 'notes')}
-${pixSvg(':is([data-tool^="job_"],[data-tool="bash"][data-variant="job"]) [class*="_iconIdle"] svg', 'clock')}
 
-${K} :is([data-sample="bash"],[data-tool]) [class*="_iconIdle"] svg{color:var(--ae-cyan) !important}
-${K} :is([data-sample="bash"],[data-tool])[data-state="error"] [class*="_iconIdle"] svg{color:#ff5d7a !important}
-${K} :is([data-sample="bash"],[data-tool])[data-state="running"] [class*="_iconIdle"] svg{color:var(--ae-pink) !important;animation:ae-twinkle .8s steps(2) infinite}
+/* Tool rows: ordered from generic fallback -> semantic categories -> specific tools */
+${vecSvg('[data-tool] [class*="_iconIdle"] svg', 'echo')}
+${vecSvg(':is([data-variant="code"],[data-tool="run_code"]) [class*="_iconIdle"] svg', 'code')}
+${vecSvg(':is([data-sample="bash"],[data-variant="bash"],[data-tool="bash"],[data-tool="pwsh"]) [class*="_iconIdle"] svg', 'bash')}
+${vecSvg(':is([data-variant="read"],[data-tool*="read" i],[data-tool="view"]) [class*="_iconIdle"] svg', 'read')}
+${vecSvg(':is([data-variant="write"],[data-tool*="write" i]) [class*="_iconIdle"] svg', 'write')}
+${vecSvg(':is([data-variant="edit"],[data-tool*="edit" i],[data-tool="apply_patch"]) [class*="_iconIdle"] svg', 'edit')}
+${vecSvg(':is([data-variant="search"],[data-tool*="grep" i],[data-tool*="glob" i],[data-tool*="search" i]) [class*="_iconIdle"] svg', 'search')}
+${vecSvg(':is([data-tool*="web" i],[data-tool*="fetch" i],[data-tool*="page" i]) [class*="_iconIdle"] svg', 'web')}
+${vecSvg(':is([data-tool="read_image"],[data-tool="view_image"],[data-tool*="image_gen" i],[data-tool*="nai_" i]) [class*="_iconIdle"] svg', 'image')}
+${vecSvg(':is([data-tool^="dev_"],[data-tool^="client_guard_"],[data-tool^="cordis_"]) [class*="_iconIdle"] svg', 'module')}
+${vecSvg(':is([data-tool*="agent" i],[data-tool*="teammate" i],[data-tool*="delegate" i]) [class*="_iconIdle"] svg', 'subagent')}
+${vecSvg(':is([data-tool="todo_write"],[data-tool="skill"],[data-tool="compress"],[data-tool="recall"],[data-tool*="goal" i]) [class*="_iconIdle"] svg', 'plan')}
+${vecSvg(':is([data-tool^="job_"],[data-tool^="schedule_"],[data-tool="bash"][data-variant="job"]) [class*="_iconIdle"] svg', 'clock')}
+${vecSvg('[data-tool="ask_user_question"] [class*="_iconIdle"] svg', 'question')}
+
+/* Semantic Aemeath starlight tints per tool family */
+${K} :is([data-sample="bash"],[data-tool]) [class*="_iconIdle"] svg{
+  width:15px !important;height:15px !important;
+  color:var(--ae-cyan) !important;
+  filter:drop-shadow(0 0 4px rgba(var(--ae-cyan-rgb),.55));
+  animation:none}
+${K} :is([data-variant="code"],[data-tool="run_code"]) [class*="_iconIdle"] svg{
+  color:#c8a4ff !important;filter:drop-shadow(0 0 4px rgba(var(--ae-violet-rgb),.65))}
+${K} :is([data-sample="bash"],[data-variant="bash"],[data-tool="bash"],[data-tool="pwsh"]) [class*="_iconIdle"] svg{
+  color:#6af2ff !important;filter:drop-shadow(0 0 4px rgba(var(--ae-cyan-rgb),.68))}
+${K} :is([data-variant="write"],[data-tool="write"]) [class*="_iconIdle"] svg{
+  color:var(--ae-pink) !important;filter:drop-shadow(0 0 4px rgba(var(--ae-pink-rgb),.62))}
+${K} :is([data-variant="edit"],[data-tool="edit"],[data-tool="apply_patch"]) [class*="_iconIdle"] svg{
+  color:#f0a4ff !important;filter:drop-shadow(0 0 4px rgba(240,164,255,.55))}
+${K} :is([data-tool="read_image"],[data-tool="view_image"],[data-tool*="image_gen" i],[data-tool*="nai_" i]) [class*="_iconIdle"] svg{
+  color:var(--ae-pink-soft) !important;filter:drop-shadow(0 0 4px rgba(var(--ae-pink-rgb),.55))}
+${K} :is([data-tool*="web" i],[data-tool*="fetch" i],[data-tool*="page" i]) [class*="_iconIdle"] svg{
+  color:#6cf5e8 !important;filter:drop-shadow(0 0 4px rgba(108,245,232,.55))}
+${K} :is([data-tool^="dev_"],[data-tool^="client_guard_"],[data-tool^="cordis_"]) [class*="_iconIdle"] svg{
+  color:#9ce4ff !important;filter:drop-shadow(0 0 4px rgba(156,228,255,.6))}
+${K} :is([data-tool*="agent" i],[data-tool*="teammate" i],[data-tool*="delegate" i]) [class*="_iconIdle"] svg{
+  color:#d3a6ff !important;filter:drop-shadow(0 0 4px rgba(var(--ae-violet-rgb),.65))}
+${K} :is([data-tool^="job_"],[data-tool^="schedule_"],[data-tool="bash"][data-variant="job"]) [class*="_iconIdle"] svg{
+  color:#ffd98a !important;filter:drop-shadow(0 0 4px rgba(255,217,138,.55))}
+${K} [data-tool="ask_user_question"] [class*="_iconIdle"] svg{
+  color:var(--ae-pink-soft) !important;filter:drop-shadow(0 0 4px rgba(var(--ae-pink-rgb),.6))}
+${K} :is([data-sample="bash"],[data-tool])[data-state="error"] [class*="_iconIdle"] svg{
+  color:#ff5d7a !important;filter:drop-shadow(0 0 5px rgba(255,93,122,.72))}
+${K} :is([data-sample="bash"],[data-tool])[data-state="running"] [class*="_iconIdle"] svg{
+  color:var(--ae-pink) !important;filter:drop-shadow(0 0 5px rgba(var(--ae-pink-rgb),.78));animation:ae-breathe 1.1s ease-in-out infinite}
 ${K} :is([data-sample="bash"] [class*="CY-8Ka_title"],[data-tool] [class*="iWrAna_title"]){color:var(--ae-pink-soft) !important}
 
 
 /* ================= step-process summary rows (已完成调谐 / 正在释放共鸣技能) ================= */
-${pixSvg('[data-step-process-icon] svg', 'wave')}
-${pixSvg('[data-process-activity="thinking"] [data-step-process-icon] svg', 'wave')}
-${pixSvg('[data-process-activity="commands"] [data-step-process-icon] svg', 'zap')}
-${pixSvg('[data-process-activity="tools"] [data-step-process-icon] svg', 'echo')}
-${pixSvg('[data-process-activity="read"] [data-step-process-icon] svg', 'book')}
-${pixSvg('[data-process-activity="readImage"] [data-step-process-icon] svg', 'image')}
-${pixSvg('[data-process-activity="write"] [data-step-process-icon] svg', 'edit')}
-${pixSvg('[data-process-activity="edit"] [data-step-process-icon] svg', 'edit')}
-${pixSvg('[data-process-activity="search"] [data-step-process-icon] svg', 'search')}
-${pixSvg('[data-process-activity="web"] [data-step-process-icon] svg', 'cloud')}
-${pixSvg('[data-process-activity="webSearch"] [data-step-process-icon] svg', 'cloud')}
-${pixSvg('[data-process-activity="webFetch"] [data-step-process-icon] svg', 'cloud')}
-${pixSvg('[data-process-activity="subagents"] [data-step-process-icon] svg', 'echo')}
-${pixSvg('[data-process-activity="agents"] [data-step-process-icon] svg', 'users')}
-${pixSvg('[data-process-activity="files"] [data-step-process-icon] svg', 'folder')}
-${pixSvg('[data-process-activity="plan"] [data-step-process-icon] svg', 'list')}
-${pixSvg('[data-process-activity="todo"] [data-step-process-icon] svg', 'list')}
-${pixSvg('[data-process-activity="memory"] [data-step-process-icon] svg', 'notes')}
-${pixSvg('[data-process-activity="skills"] [data-step-process-icon] svg', 'notes')}
-${pixSvg('[data-process-activity="jobs"] [data-step-process-icon] svg', 'clock')}
-${pixSvg('[data-process-activity="questions"] [data-step-process-icon] svg', 'message')}
-${K} [data-step-process-icon] svg{color:var(--ae-cyan) !important}
-${K} [data-process-activity="thinking"] [data-step-process-icon] svg{color:var(--ae-pink) !important}
-${K} [aria-expanded] > [class*="O_Ebla_leading"] [data-step-process-icon] svg{filter:drop-shadow(0 0 3px rgba(var(--ae-cyan-rgb),.6))}
+${vecSvg('[data-step-process-icon] svg', 'wave')}
+${vecSvg('[data-process-activity="thinking"] [data-step-process-icon] svg', 'wave')}
+${vecSvg('[data-process-activity="commands"] [data-step-process-icon] svg', 'bash')}
+${vecSvg('[data-process-activity="code"] [data-step-process-icon] svg', 'code')}
+${vecSvg('[data-process-activity="tools"] [data-step-process-icon] svg', 'echo')}
+${vecSvg('[data-process-activity="read"] [data-step-process-icon] svg', 'read')}
+${vecSvg('[data-process-activity="readImage"] [data-step-process-icon] svg', 'image')}
+${vecSvg('[data-process-activity="write"] [data-step-process-icon] svg', 'write')}
+${vecSvg('[data-process-activity="edit"] [data-step-process-icon] svg', 'edit')}
+${vecSvg('[data-process-activity="search"] [data-step-process-icon] svg', 'search')}
+${vecSvg('[data-process-activity="web"] [data-step-process-icon] svg', 'web')}
+${vecSvg('[data-process-activity="webSearch"] [data-step-process-icon] svg', 'web')}
+${vecSvg('[data-process-activity="webFetch"] [data-step-process-icon] svg', 'web')}
+${vecSvg('[data-process-activity="subagents"] [data-step-process-icon] svg', 'subagent')}
+${vecSvg('[data-process-activity="agents"] [data-step-process-icon] svg', 'subagent')}
+${vecSvg('[data-process-activity="files"] [data-step-process-icon] svg', 'folder')}
+${vecSvg('[data-process-activity="plan"] [data-step-process-icon] svg', 'plan')}
+${vecSvg('[data-process-activity="todo"] [data-step-process-icon] svg', 'plan')}
+${vecSvg('[data-process-activity="memory"] [data-step-process-icon] svg', 'plan')}
+${vecSvg('[data-process-activity="skills"] [data-step-process-icon] svg', 'plan')}
+${vecSvg('[data-process-activity="context"] [data-step-process-icon] svg', 'plan')}
+${vecSvg('[data-process-activity="jobs"] [data-step-process-icon] svg', 'clock')}
+${vecSvg('[data-process-activity="questions"] [data-step-process-icon] svg', 'question')}
+${K} [data-step-process-icon] svg{width:15px !important;height:15px !important;color:var(--ae-cyan) !important;filter:drop-shadow(0 0 4px rgba(var(--ae-cyan-rgb),.55))}
+${K} [data-process-activity="thinking"] [data-step-process-icon] svg{color:var(--ae-pink) !important;filter:drop-shadow(0 0 4px rgba(var(--ae-pink-rgb),.6))}
+${K} [data-process-activity="code"] [data-step-process-icon] svg{color:#c8a4ff !important;filter:drop-shadow(0 0 4px rgba(var(--ae-violet-rgb),.6))}
+${K} [data-process-activity="write"] [data-step-process-icon] svg,${K} [data-process-activity="edit"] [data-step-process-icon] svg{color:var(--ae-pink-soft) !important}
+${K} [aria-expanded] > [class*="O_Ebla_leading"] [data-step-process-icon] svg{filter:drop-shadow(0 0 4px rgba(var(--ae-cyan-rgb),.65))}
 /* tapping a summary row on a phone leaves it :focus-visible (Chrome Android
    treats tap-then-keyboard-less focus as visible) → a pink rounded ring hung
    around 「已唤醒声骸…」. These rows only toggle, so no ring; keyboard users
@@ -325,7 +713,6 @@ ${K} [data-turn-process]:focus-visible,${K} [data-disclosure-row]:focus-visible{
   ${K} [data-step-process] :is(button,[role="button"],[aria-expanded]):focus-visible,
   ${K} [data-turn-process]:focus-visible,${K} [data-disclosure-row]:focus-visible{text-decoration:none}
 }
-
 
 /* ================= collapsed / emptied flow items: no empty cards ================= */
 ${K} [data-chat-flow-kind="assistant-step"]:is(:empty,:not(:has(p,pre,ul,ol,table,img,h1,h2,h3,h4,blockquote,[class*="_markdown"],[class*="_body"] *))){
@@ -454,6 +841,16 @@ ${K} [data-phase] header svg[class*="SVAs4q_icon"]{display:block !important;alig
 ${pixFrame(`${K} [data-phase] header button[class*="QsffPG_trigger"]`, 'var(--ae-cyan)', 0.14)}
 ${K} [data-phase] header button[class*="QsffPG_trigger"]{padding:2px 10px 2px 26px !important;min-height:26px !important;align-items:center !important}
 ${K} [data-phase] header button[class*="QsffPG_trigger"][aria-label*="运行中"]::after{background:var(--ae-pink) !important}
+${K} [data-phase] header [class*="ZKlsPq_root"]:has(> button[class*="ZKlsPq_trigger"]){align-items:center !important}
+${pixFrame(`${K} [data-phase] header button[class*="ZKlsPq_trigger"]`, 'var(--ae-violet)', 0.16)}
+${K} [data-phase] header button[class*="ZKlsPq_trigger"]{display:inline-flex !important;align-items:center !important;gap:3px !important;height:26px !important;min-height:26px !important;
+  padding:2px 8px 2px 25px !important;font-size:12px !important;font-weight:600;line-height:22px !important;white-space:nowrap;color:#d9ccff !important}
+${K} [data-phase] header button[class*="ZKlsPq_trigger"]::before{content:"";position:absolute;left:8px;top:50%;width:13px;height:13px;margin-top:-6.5px;background:currentColor;-webkit-mask:${svgUrl('androids')} center/contain no-repeat;mask:${svgUrl('androids')} center/contain no-repeat}
+${K} [data-phase] header button[class*="ZKlsPq_trigger"]:is([aria-label*="正在"],[aria-label*="running"]):not(#ae-x){color:var(--ae-pink-soft) !important}
+${K} [data-phase] header button[class*="ZKlsPq_trigger"]:is([aria-label*="正在"],[aria-label*="running"]):not(#ae-x)::before{background:var(--ae-pink);animation:ae-twinkle 1.2s steps(2) infinite}
+${K} [data-phase] header button[class*="ZKlsPq_trigger"]:is([aria-label*="正在"],[aria-label*="running"]):not(#ae-x)::after{background:var(--ae-pink) !important}
+${K} [data-phase] header button[class*="ZKlsPq_trigger"] [class*="ZKlsPq_activitySlot"]{display:none !important}
+${K} [data-phase] header button[class*="ZKlsPq_trigger"] > svg{width:12px !important;height:12px !important;flex:none;opacity:.75}
 ${pixFrame(`${K} [data-phase] header :is([data-mobile-nav="toggle"],[data-mobile-nav="files"],button[class*="_moreButton"],button[data-sidebar-right-expand],button[aria-label="智能体团队"])`, 'var(--ae-pink)', 0.2, 2, 'after')}
 ${K} [data-phase] header :is([data-mobile-nav="toggle"],[data-mobile-nav="files"],button[class*="_moreButton"],button[data-sidebar-right-expand],button[aria-label="智能体团队"]):active::after{background:var(--ae-cyan) !important}
 
@@ -488,7 +885,7 @@ ${K} [data-composer-card] ~ [class$="_dock"] > span:last-child{flex:0 0 auto !im
   /* keyboard up: let the text area shrink instead of pushing the tool rows down */
   ${K} [data-mobile-nav="frame"] [data-composer-card] [class$="_scroll"]{max-height:min(var(--dsh-composer-text-max-height,336px),calc(100dvh - var(--dshm-keyboard-inset,0px) - 330px),34dvh) !important;min-height:28px}
   ${K} [data-mobile-nav="frame"] [data-composer-card] [class$="_row"]{padding-bottom:8px !important}
-  ${K} [data-mobile-nav="frame"] [data-composer-card] [class$="_trailing"]{flex:1 0 100% !important;justify-content:space-between !important;margin-left:0 !important}
+  ${K} [data-mobile-nav="frame"] [data-composer-card] [class$="_trailing"]{flex:1 0 100% !important;justify-content:flex-start !important;margin-left:0 !important}
 }
 
 /* ===== 轮次导航刻度：星辉粉 / 青 ===== */
@@ -509,8 +906,16 @@ ${SB} > [class*="rwa6qG_entry"],${SB} > [class*="hHd-Xa_panelList"] > *{grid-row
 ${SB} > [class*="hHd-Xa_panelList"]{display:contents !important}
 ${SB}:has(> [class*="hHd-Xa_panelList"] > :nth-child(5)){grid-template-columns:repeat(6,minmax(0,1fr))}
 ${SB}:has(> [class*="hHd-Xa_panelList"] > :nth-child(6)){grid-template-columns:repeat(7,minmax(0,1fr))}
-${SB} > [class*="hHd-Xa_regionArea"]{grid-row:4;min-height:0}
+${SB} > [class*="hHd-Xa_regionArea"],${SB} > [class*="hHd-Xa_scrollRegion"]{grid-row:4;min-height:0}
 ${SB} > [class*="hHd-Xa_footArea"]{grid-row:5}
+/* 0.2.2 侧栏把 panelList 移进了 scrollRegion > scrollArea，这里还原 0.2.1 单排紧凑像素图标格 */
+${SB} [class*="hHd-Xa_scrollArea"]{display:flex !important;flex-direction:column !important;margin:0 !important;padding:0 !important;gap:4px !important;overflow:hidden auto !important}
+${SB} [class*="hHd-Xa_scrollArea"]::before,${SB} [class*="hHd-Xa_scrollArea"]::after{display:none !important}
+${SB} [class*="hHd-Xa_scrollFade"]{display:none !important}
+${SB} [class*="hHd-Xa_panelList"]{display:grid !important;grid-template-columns:repeat(auto-fit,minmax(0,1fr)) !important;gap:4px !important;width:100% !important;margin:0 0 4px !important;padding:0 !important;flex:none !important}
+${SB} [class*="hHd-Xa_panelEntry"]{display:block !important;border:0 !important;margin:0 !important;padding:0 !important;min-width:0 !important;background:transparent !important;box-shadow:none !important}
+${SB} [class*="hHd-Xa_panelEntryWide"] [class*="hHd-Xa_panelRow"]{padding:6px 2px 5px !important;margin:0 !important;width:100% !important}
+${SB} [class*="hHd-Xa_panelUnpin"]{display:none !important}
 /* 顶部图标格 */
 ${SB} > [class*="rwa6qG_entry"],${SB} [class*="hHd-Xa_panelRow"]{
   box-sizing:border-box;display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;
@@ -518,9 +923,10 @@ ${SB} > [class*="rwa6qG_entry"],${SB} [class*="hHd-Xa_panelRow"]{
   border-radius:0 !important;background:rgba(var(--ae-plum2-rgb),.55) !important;
   box-shadow:inset 0 0 0 1px rgba(var(--ae-pink-rgb),.22),inset 0 -2px 0 rgba(0,0,0,.35) !important;
   clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px)}
+${SB} > [class*="rwa6qG_entry"]{grid-row:3;grid-column:1 / -1 !important;flex-direction:row !important;justify-content:center !important;height:32px !important;gap:6px !important;margin:0 0 4px !important;padding:0 10px !important}
 ${SB} [class*="hHd-Xa_moreAnchor"]{display:block;min-width:0}
 ${SB} > [class*="rwa6qG_entry"]:active,${SB} [class*="hHd-Xa_panelRow"]:active{transform:translate(1px,1px)}
-${SB} [class*="hHd-Xa_panelRow"][class*="hHd-Xa_panelActive"]{background:rgba(var(--ae-pink-rgb),.28) !important;
+${SB} [class*="hHd-Xa_panelRow"][class*="hHd-Xa_panelActive"],${SB} [class*="hHd-Xa_panelEntryActive"] [class*="hHd-Xa_panelRow"]{background:rgba(var(--ae-pink-rgb),.28) !important;
   box-shadow:inset 0 0 0 1px var(--ae-pink),inset 0 -2px 0 rgba(0,0,0,.35) !important}
 ${SB} [class*="rwa6qG_entryIcon"],${SB} [class*="hHd-Xa_panelGlyph"]{flex:none;margin:0 !important;color:var(--ae-cyan) !important;transform:scale(1.15)}
 ${SB} [class*="rwa6qG_entryLabel"],${SB} [class*="hHd-Xa_panelTitle"]{
@@ -565,3 +971,4 @@ ${SB} [class*="hHd-Xa_settingsArea"] button[class*="yHnPSG_trigger"]{min-height:
 }
 
 module.exports = { buildCss, svgUrl, pixFrame };
+

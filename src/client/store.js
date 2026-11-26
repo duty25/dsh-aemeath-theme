@@ -37,7 +37,7 @@ const DEFAULTS = {
   hideNotifyBell: true,     // hide memory-evolve's floating in-app notification bell
   // settings dialog (DSH 0.2.x)
   settingsSkin: true,       // 星落/赛博 control-room skin for the official settings dialog
-  settingsStyle: 'resonance', // 'resonance' 频段柱(爱弥斯) | 'starfall' 暗金 | 'cyber' 电黄 | 'classic' 仅换色不改导航
+  settingsStyle: 'starlight', // 'starlight' 星辉侧栏(默认) | 'resonance' 频段柱 | 'classic' 仅换色不改导航
   settingsFlip: 'glitch',   // 翻页效果：'glitch' 电子幽灵乱码 | 'scan' 共鸣扫描 | 'slide' 平移 | 'none'
   settingsSwipe: true,      // 设置内容区左右滑动翻页
   settingsSplit: true,      // two entrances: 系统设置 (official) / 插件中心 (plugin pages)
@@ -50,6 +50,8 @@ const DEFAULTS = {
   capsuleSkin: true,
   polestarSlider: true,
   chatChrome: true,         // 聊天页顶栏/输入框/状态条的「舰桥」样式
+  headerStyle: 'starlight', // 'starlight' 星辉胶囊 | 'ribbon' 轻透星轨 | 'classic' 原版舰桥
+  sidebarStyle: 'starlight', // 侧栏风格：'starlight' 星辉玻璃 | 'pixel' 像素舰桥
   compactSidebar: true,     // 侧栏紧凑布局：顶部入口一排图标、底部两排卡片     // 思考强度滑块：永远的启明星光刃 + 粒子
   capsuleClamp: true,       // keep the model panel inside the viewport on phones
   // layout
@@ -69,7 +71,7 @@ function load() {
   for (const id of DOCK_ACTIONS) if (!known.has(id)) merged.dockActions.push({ id, on: false });
   // v2: the settings dialog got the 频段柱 (resonance) layout; move earlier
   // saves off the old default once, keep any later explicit choice.
-  if (merged.settingsStyle !== 'resonance' && merged.settingsStyle !== 'classic') merged.settingsStyle = 'resonance';
+  if (!['starlight', 'resonance', 'classic'].includes(merged.settingsStyle)) merged.settingsStyle = 'starlight';
   if ((saved.settingsRev || 0) < 2) {
     if (!saved.settingsStyle || saved.settingsStyle === 'starfall' || saved.settingsStyle === 'cyber') merged.settingsStyle = 'resonance';
     merged.settingsRev = 2;
@@ -79,6 +81,12 @@ function load() {
   if ((merged.settingsRev || 0) < 3) {
     if (!saved.settingsFlip || saved.settingsFlip === 'scan') merged.settingsFlip = 'glitch';
     merged.settingsRev = 3;
+  }
+  // v4: the 星辉·侧栏 (starlight) layout becomes the default; a save that still
+  // carried the old resonance default moves over once, later choices stick.
+  if ((merged.settingsRev || 0) < 4) {
+    if (merged.settingsStyle === 'resonance') merged.settingsStyle = 'starlight';
+    merged.settingsRev = 4;
   }
   return merged;
 }
@@ -109,3 +117,4 @@ function setCustomBg(dataUrl) {
 }
 
 module.exports = { get, set, reset, subscribe, DEFAULTS, DOCK_ACTIONS, getCustomBg, setCustomBg };
+

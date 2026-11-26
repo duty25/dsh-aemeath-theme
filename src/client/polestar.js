@@ -197,13 +197,24 @@ function drawSparkles(ctx, origin, height, dt, st) {
 }
 
 function install() {
-  let style = null, raf = 0, mo = null, last = 0;
+  let style = null, raf = 0, mo = null, bodyMo = null;
   const sliders = new Map();
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 
+  const isCovered = () => document.hidden
+    || reduced.matches
+    || (document.body.hasAttribute('data-ae-settings-open') && innerWidth <= 760);
+
   const progressOf = (el) => {
-    const n = parseFloat(el.style.getPropertyValue('--re-progress') || getComputedStyle(el).getPropertyValue('--re-progress'));
+    const host = el.style.getPropertyValue('--re-progress')
+      || el.closest('.re-effort')?.style.getPropertyValue('--re-progress')
+      || getComputedStyle(el).getPropertyValue('--re-progress');
+    const n = parseFloat(host);
     return isFinite(n) ? Math.max(0, Math.min(100, n)) / 100 : .5;
+  };
+  const wake = () => {
+    if (isCovered()) { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+    else if (sliders.size && !raf) raf = requestAnimationFrame(tick);
   };
   const attach = (el) => {
     if (sliders.has(el)) return;
@@ -216,16 +227,15 @@ function install() {
   const scan = () => {
     for (const el of document.querySelectorAll('.re-effort-slider')) attach(el);
     for (const [el, s] of sliders) if (!el.isConnected) detach(el, s);
-    if (sliders.size && !raf) raf = requestAnimationFrame(tick);
+    wake();
   };
 
   const tick = (t) => {
     raf = 0;
-    if (!sliders.size) return;
-    const dt = Math.min(3, (t - (last || t)) / 16.7 || 1); last = t;
+    if (!sliders.size || isCovered()) return;
     for (const [el, s] of sliders) {
       const r = el.getBoundingClientRect();
-      if (!r.width || r.bottom < 0 || r.top > innerHeight) continue;
+      if (!r.width || r.bottom < 0 || r.top > innerHeight || r.right <= 0 || r.left >= innerWidth) continue;
       const dragging = !!el.closest('.re-effort.is-dragging');
       if (!dragging && t - s.drawn < 33) continue;
       const step = Math.min(3, (t - (s.drawn || t)) / 16.7 || 1);
@@ -244,7 +254,7 @@ function install() {
       drawRadiation(s.ctx, W, H, t, s);
       drawSparkles(s.ctx, p * W, H, step, s);
     }
-    if (sliders.size && !reduced.matches) raf = requestAnimationFrame(tick);
+    if (sliders.size && !isCovered()) raf = requestAnimationFrame(tick);
   };
 
   const apply = (prefs) => {
@@ -254,11 +264,20 @@ function install() {
       root.setAttribute('data-ae-polestar', '');
       if (!style) { style = document.createElement('style'); style.setAttribute('data-plugin-css', 'dsh-aemeath-theme/polestar.css'); style.textContent = css(); document.head.appendChild(style); }
       if (!mo) { let q = 0; mo = new MutationObserver(() => { if (!q) q = requestAnimationFrame(() => { q = 0; scan(); }); }); mo.observe(document.body, { childList: true, subtree: true }); }
+      if (!bodyMo) {
+        bodyMo = new MutationObserver(wake);
+        bodyMo.observe(document.body, { attributes: true, attributeFilter: ['data-ae-settings-open'] });
+        document.addEventListener('visibilitychange', wake);
+      }
       scan();
     } else {
       root.removeAttribute('data-ae-polestar');
       if (style) { style.remove(); style = null; }
       if (mo) { mo.disconnect(); mo = null; }
+      if (bodyMo) {
+        bodyMo.disconnect(); bodyMo = null;
+        document.removeEventListener('visibilitychange', wake);
+      }
       if (raf) { cancelAnimationFrame(raf); raf = 0; }
       for (const [el, s] of sliders) detach(el, s);
     }

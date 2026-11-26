@@ -88,6 +88,13 @@ const JOBS = {
   'count.idle.one': '{count} 声骸待命',
   'count.idle.other': '{count} 声骸待命',
 };
+// Subagent-count chip in the session header (dsh-client-ui-subagent).
+const SUBAGENTS = {
+  'count.total.one': '{count} 个声骸',
+  'count.total.other': '{count} 个声骸',
+  'count.running.one': '{count} 个声骸，正在共鸣',
+  'count.running.other': '{count} 个声骸，正在共鸣',
+};
 // "深度求索中，用时 N 秒" row above the composer.
 Object.assign(CHAT, {
   'message.think': '救世中',
@@ -111,7 +118,7 @@ Object.assign(CHAT, {
 function tables(p) {
   const t = {};
   const add = (ns, obj) => { t[ns] = Object.assign(t[ns] || {}, obj); };
-  if (p.wwLingo) { add('chat', CHAT); add('conversation', CONVERSATION); add('settings.agentPreset', PRESETS); add('job', JOBS); }
+  if (p.wwLingo) { add('chat', CHAT); add('conversation', CONVERSATION); add('settings.agentPreset', PRESETS); add('job', JOBS); add('subagent', SUBAGENTS); }
   if (p.brand) {
     const { NAMES } = require('./brand.js');
     add('conversation', { 'hero.headline': (NAMES[p.brandName] || NAMES.spacetrek).title });
@@ -152,7 +159,7 @@ function install(ctx) {
 
   // Dictionaries register lazily (job / agent-preset come late); re-apply
   // whenever a namespace we care about shows up, for the first 30 s.
-  const WANT = ['chat', 'conversation', 'settings.agentPreset', 'job'];
+  const WANT = ['chat', 'conversation', 'settings.agentPreset', 'job', 'subagent'];
   let seen = '';
   let tries = 0;
   const timer = setInterval(() => {
@@ -167,4 +174,4 @@ function install(ctx) {
   return () => { clearInterval(timer); off(); restore(); bump(); };
 }
 
-module.exports = { install, CHAT, CONVERSATION, PRESETS, JOBS };
+module.exports = { install, CHAT, CONVERSATION, PRESETS, JOBS, SUBAGENTS };

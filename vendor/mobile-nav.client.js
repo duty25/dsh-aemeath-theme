@@ -98,7 +98,7 @@ function MobileNavOverlay({ toggleSidebar, t }) {
             const target = event.target;
             if (!(target instanceof Element))
                 return;
-            const drawer = findFrame()?.firstElementChild;
+            const _f = findFrame(); const drawer = _f?.querySelector(':scope > [class*="_sidebarCol"]') || _f?.firstElementChild;
             if (!drawer?.contains(target))
                 return;
             // Row actions and portaled dialogs must remain visible in the sidebar.
@@ -513,8 +513,14 @@ const controllers = new WeakMap();
 function findFrame() {
     return document.querySelector('[data-mobile-nav="frame"]');
 }
+function findSidebarCol(frame) {
+    return frame?.querySelector(':scope > [class*="_sidebarCol"]') || frame?.firstElementChild || null;
+}
+function findCenterCol(frame) {
+    return frame?.querySelector(':scope > [class*="_centerCol"]') || frame?.children[1] || null;
+}
 function chatPageLeft(frame) {
-    const sidebar = frame.firstElementChild;
+    const sidebar = findSidebarCol(frame);
     return sidebar instanceof HTMLElement && sidebar.offsetWidth > 0 ? sidebar.offsetWidth : frame.clientWidth;
 }
 /** One navigation owner prevents repeated clicks from restarting a smooth scroll. */
@@ -644,11 +650,19 @@ class PagerController {
         document.addEventListener('pointerdown', this.#onDocClickCapture, true);
         frame.addEventListener('scroll', this.#onPagerScroll, { passive: true });
         frame.addEventListener('scrollend', this.#settlePager);
+        const clearDrawerInert = () => {
+            if (!this.#mql?.matches) return;
+            for (const child of frame.children) {
+                if (child.hasAttribute('inert')) child.removeAttribute('inert');
+            }
+        };
         this.#frameObserver = new MutationObserver(() => {
             if (!frame.hasAttribute('data-sidebar-collapsed'))
                 this.#expandPending = false;
+            clearDrawerInert();
         });
-        this.#frameObserver.observe(frame, { attributes: true, attributeFilter: ['data-sidebar-collapsed'] });
+        this.#frameObserver.observe(frame, { attributes: true, subtree: true, childList: true, attributeFilter: ['data-sidebar-collapsed', 'inert'] });
+        clearDrawerInert();
         const root = document.getElementById('root') ?? document.body;
         this.#composerCleanup = (0, dom_watch_ts_1.observeRelevant)(root, MODEL_SLOT, this.#requestMarqueeSync, { childList: true, subtree: true, characterData: true });
         if (typeof ResizeObserver !== 'undefined') {
@@ -699,7 +713,7 @@ class PagerController {
             frame.removeAttribute(TARGET_ATTR);
             frame.removeAttribute(MOVING_ATTR);
             frame.style.removeProperty('--dshm-keyboard-inset');
-            const card = frame.children[1];
+            const card = findCenterCol(frame);
             if (card instanceof HTMLElement)
                 card.style.removeProperty('--dshm-card-radius');
         }
@@ -751,7 +765,7 @@ class PagerController {
         this.#cancelDeferred();
         if (!this.#mql?.matches) {
             frame.removeAttribute(exports.PAGE_ATTR);
-            const card = frame.children[1];
+            const card = findCenterCol(frame);
             if (card instanceof HTMLElement)
                 card.style.removeProperty('--dshm-card-radius');
             this.#restoreMarquee();
@@ -820,7 +834,7 @@ class PagerController {
             frame.removeAttribute(TARGET_ATTR);
             return;
         }
-        const sidebar = frame.firstElementChild;
+        const sidebar = findSidebarCol(frame);
         if (sidebar?.contains(target)) {
             const button = target.closest('button');
             if (button !== null && SIDEBAR_COLLAPSE_LABELS.has(button.getAttribute('aria-label') ?? '')) {
@@ -832,7 +846,7 @@ class PagerController {
         }
         if (frame.scrollLeft >= chatPageLeft(frame) / 2)
             return;
-        if (frame.children[1]?.contains(target)) {
+        if (findCenterCol(frame)?.contains(target)) {
             event.preventDefault();
             event.stopPropagation();
             this.navigate('chat');
@@ -1921,8 +1935,8 @@ exports.LAYOUT_CSS = `/* ---------- mobile-only layout ---------- */
   [data-mobile-nav="frame"] {
     position: relative !important;
     grid-template-columns: var(--dshm-sidebar-width) 100% 0 !important;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
@@ -1930,6 +1944,18 @@ exports.LAYOUT_CSS = `/* ---------- mobile-only layout ---------- */
     /* The top padding clears the status bar / notch for every in-flow
        surface (session header, messages, composer). */
     padding-top: env(safe-area-inset-top, 0px) !important;
+  }
+
+  /* DSH 0.2.2+ native drawer mask collides with the PiUI horizontal pager; hide it on mobile pager. */
+  [data-mobile-nav="frame"] > [data-sidebar-mask] {
+    display: none !important;
+    pointer-events: none !important;
+  }
+
+  /* DSH 0.2.2+ keepAboveClosing() expands [data-chat-turn-spacer] to ~50vh when collapsing tool steps, leaving running indicator floating above a huge void on phones. */
+  [data-mobile-nav="frame"] [data-chat-turn-spacer] {
+    height: 0 !important;
+    min-height: 0 !important;
   }
 
   /* Hide the pager's own horizontal scrollbar on every engine. */
@@ -1941,7 +1967,8 @@ exports.LAYOUT_CSS = `/* ---------- mobile-only layout ---------- */
 
   /* The two live pages snap to the scrollport start (scroll-snap-stop keeps
      a fast swipe from skipping a page). */
-  [data-mobile-nav="frame"] > :nth-child(-n+2) {
+  [data-mobile-nav="frame"] > [class*="_sidebarCol"],
+  [data-mobile-nav="frame"] > [class*="_centerCol"] {
     scroll-snap-align: start;
     scroll-snap-stop: normal;
   }
@@ -1950,9 +1977,12 @@ exports.LAYOUT_CSS = `/* ---------- mobile-only layout ---------- */
      treatment and no divider line against the chat — with safe-area top so
      its controls clear the notch. The chat card's radius and shadow are
      what separate the two (PiUI). */
-  [data-mobile-nav="frame"] > :first-child {
+  [data-mobile-nav="frame"] > [class*="_sidebarCol"] {
+    grid-area: 1 / 1 !important;
     position: static !important;
     inset: auto !important;
+    width: 100% !important;
+    visibility: visible !important;
     background: var(--dsw-alias-bg-base, #ffffff);
     border-right: none !important;
     padding-top: var(--dshm-safe-top);
@@ -1966,8 +1996,8 @@ exports.LAYOUT_CSS = `/* ---------- mobile-only layout ---------- */
      two wrapper levels the shell tree may insert between the frame column and
      the sidebar root — so every layer of the sidebar page matches the chat
      background. Deeper elements keep their own states untouched. */
-  [data-mobile-nav="frame"] > :first-child > :first-child,
-  [data-mobile-nav="frame"] > :first-child > :first-child > :first-child {
+  [data-mobile-nav="frame"] > [class*="_sidebarCol"] > :first-child,
+  [data-mobile-nav="frame"] > [class*="_sidebarCol"] > :first-child > :first-child {
     background: transparent;
   }
 
@@ -1975,19 +2005,20 @@ exports.LAYOUT_CSS = `/* ---------- mobile-only layout ---------- */
      (inline style); the phone layout keeps the sidebar open, so that frozen
      width would leave the right side of the page empty on wide screens.
      Min-width (not width) stretches the shell to fill the page column. */
-  [data-mobile-nav="frame"] > :first-child div[style*='width'] {
+  [data-mobile-nav="frame"] > [class*="_sidebarCol"] div[style*='width'] {
     min-width: 100%;
   }
 
   /* The session list's bottom scroll fade is a desktop affordance; on the
      always-open phone sidebar it just dims the tail of the list. */
-  [data-mobile-nav="frame"] > :first-child div:has(> [role='tree']) > span {
+  [data-mobile-nav="frame"] > [class*="_sidebarCol"] div:has(> [role='tree']) > span {
     display: none;
   }
 
   /* Keep snap targets untransformed. A live radius would repaint the
      whole chat on every swipe frame, which flashes the messages and input. */
-  [data-mobile-nav="frame"] > :nth-child(2) {
+  [data-mobile-nav="frame"] > [class*="_centerCol"] {
+    grid-area: 1 / 2 !important;
     border: none;
     border-radius: 0;
     overflow: clip;
@@ -2214,6 +2245,13 @@ exports.LAYOUT_CSS = `/* ---------- mobile-only layout ---------- */
   [data-mobile-nav="frame"] [data-composer-card] [class$="_trailing"] > [class$="_primary"],
   [data-mobile-nav="frame"] [data-composer-card] [class$="_trailing"] > [class$="_activity"] + [class$="_primary"] {
     margin-left: auto !important;
+    flex: none !important;
+  }
+  [data-mobile-nav="frame"] [data-composer-card] [class$="_trailing"] > [class$="_primary"] + [class$="_primary"] {
+    margin-left: 0 !important;
+    flex: none !important;
+  }
+  [data-mobile-nav="frame"] [data-composer-card] [class$="_trailing"] > [class$="_primary"] {
   }
   [data-mobile-nav="frame"] [data-composer-card] [class$="_trailing"] > [class$="_primary"] {
     flex: none !important;

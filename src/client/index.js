@@ -127,8 +127,7 @@ function apply(ctx) {
 
   // ---------- settings dialog: new skin + two entrances ----------
   ctx.effect(() => settingsSkin.install(ctx, store), `${NAME}: settings skin`);
-  ctx.effect(() => settingsDeck.install(ctx, { openSettings: settingsSplit.openSettings }), `${NAME}: settings deck`);
-  ctx.effect(() => settingsSplit.install(ctx), `${NAME}: settings split`);
+  ctx.effect(() => settingsSplit.install(ctx, settingsDeck.create(settingsSplit.openSettings)), `${NAME}: settings navigation`);
   settingsSplit.registerEntrances(ctx, React, ICONS);
 
   // debug hook for verification from devtools
